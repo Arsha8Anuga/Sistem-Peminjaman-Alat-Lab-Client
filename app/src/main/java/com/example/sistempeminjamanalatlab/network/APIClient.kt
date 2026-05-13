@@ -1,4 +1,4 @@
-package com.example.sistempeminjamanalatlab.Network
+package com.example.sistempeminjamanalatlab.network
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
