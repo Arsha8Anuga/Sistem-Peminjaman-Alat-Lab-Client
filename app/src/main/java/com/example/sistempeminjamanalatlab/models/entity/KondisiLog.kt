@@ -6,19 +6,20 @@ data class KondisiLog(
     @SerializedName("id") val id: Long,
     @SerializedName("alat_id") val alatId: Long,
 
-    // Tambahkan ini: Untuk melacak log ini berasal dari transaksi mana
+    // Relasi ke transaksi (nullable karena bisa jadi pengecekan rutin)
     @SerializedName("peminjaman_id") val peminjamanId: Long?,
 
-    // Sesuai ENUM: baik, rusak_ringan, rusak_berat, maintenance, hilang
+    // Status: baik, rusak_ringan, rusak_berat, maintenance, hilang
     @SerializedName("kondisi") val kondisi: String,
 
     @SerializedName("catatan") val catatan: String?,
 
-    // Gunakan Long untuk ID atau User object untuk data lengkap
-    @SerializedName("dicatat_oleh") val dicatatOleh: Long,
+    // URL Foto bukti kondisi alat (Penting untuk audit lab)
+    @SerializedName("foto") val foto: String?,
 
+    @SerializedName("dicatat_oleh") val dicatatOleh: Long,
     @SerializedName("created_at") val createdAt: String,
 
-    // Relasi ke User (Staff yang mencatat log)
-    @SerializedName("pencatat") val pencatat: User?
+    // Relasi objek untuk menampilkan nama Laboran di UI
+    @SerializedName("pencatat") val pencatat: User? = null
 )

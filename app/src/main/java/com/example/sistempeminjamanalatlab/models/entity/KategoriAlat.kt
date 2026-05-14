@@ -7,7 +7,12 @@ data class KategoriAlat(
     @SerializedName("nama_kategori") val namaKategori: String,
     @SerializedName("deskripsi") val deskripsi: String?,
 
-    // Gunakan String? agar lebih aman jika server mengirimkan null
     @SerializedName("created_at") val createdAt: String?,
     @SerializedName("updated_at") val updatedAt: String? = null
-)
+) {
+    // Tips: Tambahkan fungsi ini jika kamu ingin menampilkan
+    // nama kategori langsung di Spinner (Dropdown) saat tambah alat.
+    override fun toString(): String {
+        return namaKategori
+    }
+}

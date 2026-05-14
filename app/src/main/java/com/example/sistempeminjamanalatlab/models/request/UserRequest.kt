@@ -2,6 +2,9 @@ package com.example.sistempeminjamanalatlab.models.request
 
 import com.google.gson.annotations.SerializedName
 
+// File: UserRequest.kt
+
+// Digunakan Admin untuk tambah user baru atau pendaftaran (Register)
 data class UserCreateRequest(
     @SerializedName("nama") val nama: String,
     @SerializedName("email") val email: String,
@@ -11,7 +14,7 @@ data class UserCreateRequest(
     @SerializedName("no_hp") val noHp: String?
 )
 
-// Digunakan Admin untuk mengedit data User yang sudah ada
+// Digunakan untuk Update Profil atau Admin mengedit data User
 data class UserUpdateRequest(
     @SerializedName("nama") val nama: String? = null,
     @SerializedName("email") val email: String? = null,

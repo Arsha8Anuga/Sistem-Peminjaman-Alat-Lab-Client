@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Alat(
     @SerializedName("id") val id: Long,
-    @SerializedName("kategori_id") val kategoriId: Long, // Foreign Key
+    @SerializedName("kategori_id") val kategoriId: Long,
     @SerializedName("kode_alat") val kodeAlat: String,
     @SerializedName("nama_alat") val namaAlat: String,
     @SerializedName("merk") val merk: String?,
@@ -13,17 +13,17 @@ data class Alat(
     @SerializedName("stok_total") val stokTotal: Int,
     @SerializedName("stok_tersedia") val stokTersedia: Int,
 
-    // Sesuai ENUM di database
-    @SerializedName("kondisi_fisik") val kondisiFisik: String,
-    @SerializedName("status_ketersediaan") val statusKetersediaan: String,
+    // Status (Gunakan String jika dari API berupa Enum)
+    @SerializedName("kondisi_fisik") val kondisiFisik: String, // misal: "Baik", "Rusak"
+    @SerializedName("status_ketersediaan") val statusKetersediaan: String, // misal: "Tersedia", "Kosong"
 
     @SerializedName("foto") val foto: String?,
     @SerializedName("deskripsi") val deskripsi: String?,
 
-    // Metadata (Opsional tapi berguna untuk sorting)
+    // Metadata
     @SerializedName("created_at") val createdAt: String?,
     @SerializedName("updated_at") val updatedAt: String?,
 
-    // Relasi (Gunakan jika API mengirimkan objek Kategori hasil JOIN)
+    // Relasi hasil JOIN
     @SerializedName("kategori") val kategori: KategoriAlat? = null
 )

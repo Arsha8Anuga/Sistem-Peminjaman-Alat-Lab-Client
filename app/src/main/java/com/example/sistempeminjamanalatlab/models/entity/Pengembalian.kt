@@ -6,20 +6,27 @@ data class Pengembalian(
     @SerializedName("id") val id: Long,
     @SerializedName("peminjaman_id") val peminjamanId: Long,
 
-    // Tambahkan ini: Untuk mencatat staff yang menerima pengembalian
-    @SerializedName("diterima_oleh") val diterimaOleh: Long,
+    // Staff yang memverifikasi pengembalian fisik alat
+    @SerializedName("diterima_oleh") val diterimaOleh: Long?,
 
     @SerializedName("tanggal_dikembalikan") val tanggalDikembalikan: String,
 
-    // Gunakan Double untuk mengakomodasi DECIMAL di database
+    // Menggunakan Double untuk nilai uang denda (DECIMAL)
     @SerializedName("denda") val denda: Double,
 
-    // Sesuai ENUM: menunggu, sesuai, rusak, hilang
+    // Status: menunggu (pending), sesuai, rusak, hilang
     @SerializedName("status_verifikasi") val statusVerifikasi: String,
 
     @SerializedName("catatan") val catatan: String?,
+
+    // Tambahkan ini: URL Foto bukti fisik saat pengembalian (Audit)
+    @SerializedName("foto_bukti") val fotoBukti: String?,
+
     @SerializedName("created_at") val createdAt: String?,
 
-    // Relasi Opsional (jika API mengirimkan data User hasil JOIN)
-    @SerializedName("staff_penerima") val staffPenerima: User? = null
+    // Relasi objek untuk menampilkan nama Laboran di UI
+    @SerializedName("staff_penerima") val staffPenerima: User? = null,
+
+    // Relasi ke data peminjaman utama
+    @SerializedName("peminjaman") val peminjaman: Peminjaman? = null
 )

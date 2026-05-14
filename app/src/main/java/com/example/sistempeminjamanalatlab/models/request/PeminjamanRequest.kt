@@ -2,22 +2,22 @@ package com.example.sistempeminjamanalatlab.models.request
 
 import com.google.gson.annotations.SerializedName
 
-data class PinjamRequest(
-    @SerializedName("mahasiswa_id") val mahasiswaId: Long, // Tambahkan ini
-    @SerializedName("tanggal_pinjam") val tanggalPinjam: String,
+data class PeminjamanRequest(
+    // mahasiswa_id dihapus (diambil dari Token oleh Backend)
     @SerializedName("tanggal_rencana_kembali") val tanggalRencanaKembali: String,
     @SerializedName("catatan") val catatan: String? = null,
-    @SerializedName("detail") val detail: List<DetailPeminjamanRequest>
+    @SerializedName("details") val details: List<DetailPeminjamanRequest>
+    // Gunakan "details" agar sinkron dengan penamaan jamak biasanya
 )
 
 data class DetailPeminjamanRequest(
     @SerializedName("alat_id") val alatId: Long,
-    @SerializedName("jumlah") val jumlah: Int,
-    @SerializedName("kondisi_awal") val kondisiAwal: String = "baik" // Tambahkan ini
+    @SerializedName("jumlah") val jumlah: Int
+    // kondisi_awal dihapus (ditangani oleh logic server/laboran saat verifikasi)
 )
 
 data class ApprovalRequest(
-    @SerializedName("status") val status: String,   // "disetujui" / "ditolak"
-    @SerializedName("disetujui_oleh") val disetujuiOleh: Long, // Tambahkan ini (ID Staff/Laboran)
+    // status dihapus jika menggunakan endpoint /approve atau /reject secara terpisah
     @SerializedName("catatan") val catatan: String? = null
+    // disetujui_oleh dihapus (diambil dari Token Laboran)
 )

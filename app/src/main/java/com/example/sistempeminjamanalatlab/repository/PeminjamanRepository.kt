@@ -13,8 +13,8 @@ class PeminjamanRepository(private val apiService: APIService) {
 
     // --- FITUR MAHASISWA ---
 
-    // 1. Kirim Form Pinjam
-    fun submitPeminjaman(token: String, request: PinjamRequest, onResult: (Boolean, String?) -> Unit) {
+    // Submit Pengajuan Baru
+    fun submitPeminjaman(token: String, request: PeminjamanRequest, onResult: (Boolean, String?) -> Unit) {
         apiService.createPeminjaman("Bearer $token", request).enqueue(object : Callback<PeminjamanResponse> {
             override fun onResponse(call: Call<PeminjamanResponse>, response: Response<PeminjamanResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
@@ -25,69 +25,86 @@ class PeminjamanRepository(private val apiService: APIService) {
         })
     }
 
-    // 2. Riwayat Peminjaman (Milik Mahasiswa yang sedang login)
-    fun getMyLoanHistory(token: String, onResult: (List<Peminjaman>?) -> Unit) {
-        apiService.getMyPeminjaman("Bearer $token").enqueue(object : Callback<PeminjamanListResponse> {
+    // Ambil Riwayat Milik Sendiri (Mahasiswa)
+    fun getMyLoanHistory(token: String, onResult: (List<Peminjaman>?, String?) -> Unit) {
+        apiService.getListPeminjaman("Bearer $token").enqueue(object : Callback<PeminjamanListResponse> {
             override fun onResponse(call: Call<PeminjamanListResponse>, response: Response<PeminjamanListResponse>) {
-                onResult(response.body()?.data) // Langsung ambil List<Peminjaman>
+                onResult(response.body()?.data, response.body()?.message)
             }
-            override fun onFailure(call: Call<PeminjamanListResponse>, t: Throwable) { onResult(null) }
+            override fun onFailure(call: Call<PeminjamanListResponse>, t: Throwable) {
+                onResult(null, t.message)
+            }
         })
     }
 
-    // --- FITUR LABORAN (APPROVAL & VERIFIKASI) ---
-
-    // 3. List Pengajuan (Filter status: pending)
-    fun getPendingLoans(token: String, onResult: (List<Peminjaman>?) -> Unit) {
-        apiService.getAllPeminjaman("Bearer $token", "pending").enqueue(object : Callback<PeminjamanListResponse> {
-            override fun onResponse(call: Call<PeminjamanListResponse>, response: Response<PeminjamanListResponse>) {
-                onResult(response.body()?.data)
-            }
-            override fun onFailure(call: Call<PeminjamanListResponse>, t: Throwable) { onResult(null) }
-        })
-    }
-
-    // 4. Update Status (Approval: Setujui/Tolak)
-    fun approvalPeminjaman(token: String, loanId: Long, request: ApprovalRequest, onResult: (Boolean, String?) -> Unit) {
-        apiService.approvalPeminjaman("Bearer $token", loanId, request).enqueue(object : Callback<PeminjamanResponse> {
+    // Ambil Detail Peminjaman (Untuk melihat item alat di dalamnya)
+    fun getLoanDetail(token: String, loanId: Long, onResult: (Peminjaman?, String?) -> Unit) {
+        apiService.getDetailPeminjaman("Bearer $token", loanId).enqueue(object : Callback<PeminjamanResponse> {
             override fun onResponse(call: Call<PeminjamanResponse>, response: Response<PeminjamanResponse>) {
-                onResult(response.isSuccessful, response.body()?.message)
+                onResult(response.body()?.data, response.body()?.message)
             }
-            override fun onFailure(call: Call<PeminjamanResponse>, t: Throwable) { onResult(false, t.message) }
+            override fun onFailure(call: Call<PeminjamanResponse>, t: Throwable) {
+                onResult(null, t.message)
+            }
         })
     }
 
-    // 5. Verifikasi Pengembalian
-    fun verifyReturn(token: String, request: PengembalianRequest, onResult: (Boolean, String?) -> Unit) {
-        apiService.submitPengembalian("Bearer $token", request).enqueue(object : Callback<PengembalianResponse> {
+    // --- FITUR LABORAN (APPROVAL & ALUR FISIK) ---
+
+    // Aksi: Approve
+    fun approveLoan(token: String, loanId: Long, onResult: (Boolean, String?) -> Unit) {
+        apiService.approvePeminjaman("Bearer $token", loanId).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+                onResult(response.isSuccessful, response.body()?.message)
+            }
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) { onResult(false, t.message) }
+        })
+    }
+
+    // Aksi: Reject
+    fun rejectLoan(token: String, loanId: Long, onResult: (Boolean, String?) -> Unit) {
+        apiService.rejectPeminjaman("Bearer $token", loanId).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+                onResult(response.isSuccessful, response.body()?.message)
+            }
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) { onResult(false, t.message) }
+        })
+    }
+
+    // Aksi: Ambil Alat (Update status saat barang fisik diserahkan ke mhs)
+    fun ambilAlat(token: String, loanId: Long, onResult: (Boolean, String?) -> Unit) {
+        apiService.ambilAlat("Bearer $token", loanId).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+                onResult(response.isSuccessful, response.body()?.message)
+            }
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) { onResult(false, t.message) }
+        })
+    }
+
+    // --- FITUR PENGEMBALIAN & VERIFIKASI ---
+
+    // Mahasiswa: Buat laporan pengembalian
+    fun createReturn(token: String, request: PengembalianRequest, onResult: (Boolean, String?) -> Unit) {
+        apiService.createPengembalian("Bearer $token", request).enqueue(object : Callback<PengembalianResponse> {
             override fun onResponse(call: Call<PengembalianResponse>, response: Response<PengembalianResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
             }
-            override fun onFailure(call: Call<PengembalianResponse>, t: Throwable) {
+            override fun onFailure(call: Call<PengembalianResponse>, t: Throwable) { onResult(false, t.message) }
+        })
+    }
+
+    // Laboran: Verifikasi barang yang kembali
+    // Pastikan parameter 'request' bertipe VerifyPengembalianRequest
+    fun verifyPengembalian(token: String, peminjamanId: Long, request: VerifyPengembalianRequest, onResult: (Boolean, String?) -> Unit) {
+
+        // Sekarang ini tidak akan error lagi karena APIService sudah punya 3 parameter
+        apiService.verifyPengembalian("Bearer $token", peminjamanId, request).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+                onResult(response.isSuccessful, response.body()?.message)
+            }
+
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
                 onResult(false, t.message)
-            }
-        })
-    }
-
-    // 6. Monitor Peminjaman Aktif (Filter status: dipinjam)
-    fun getActiveLoans(token: String, onResult: (List<Peminjaman>?) -> Unit) {
-        apiService.getAllPeminjaman("Bearer $token", "dipinjam").enqueue(object : Callback<PeminjamanListResponse> {
-            override fun onResponse(call: Call<PeminjamanListResponse>, response: Response<PeminjamanListResponse>) {
-                onResult(response.body()?.data)
-            }
-            override fun onFailure(call: Call<PeminjamanListResponse>, t: Throwable) { onResult(null) }
-        })
-    }
-
-    // 7. Ambil Detail Pengembalian (Untuk melihat denda & catatan verifikasi)
-    fun getReturnDetail(token: String, peminjamanId: Long, onResult: (Pengembalian?) -> Unit) {
-        apiService.getPengembalianDetail("Bearer $token", peminjamanId).enqueue(object : Callback<PengembalianResponse> {
-            override fun onResponse(call: Call<PengembalianResponse>, response: Response<PengembalianResponse>) {
-                // Di sini Entity Pengembalian akhirnya digunakan secara eksplisit
-                onResult(response.body()?.data)
-            }
-            override fun onFailure(call: Call<PengembalianResponse>, t: Throwable) {
-                onResult(null)
             }
         })
     }

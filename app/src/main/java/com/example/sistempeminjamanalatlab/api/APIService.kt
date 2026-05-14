@@ -1,135 +1,98 @@
 package com.example.sistempeminjamanalatlab.api
 
-
 import com.example.sistempeminjamanalatlab.models.request.*
 import com.example.sistempeminjamanalatlab.models.response.*
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 
 interface APIService {
 
     // ─── AUTH ─────────────────────────────────────────────────
-    @POST("api/auth/login")
+    @POST("auth/login")
     fun loginUser(@Body request: LoginRequest): Call<LoginResponse>
 
-    @GET("api/auth/me")
-    fun getMe(@Header("Authorization") token: String): Call<UserResponse>
-
-    // ─── USER (ADMIN) ──────────────────────────────────────────
-    @GET("api/users")
-    fun getAllUsers(@Header("Authorization") token: String): Call<UserListResponse>
-
-    @GET("api/users/{id}")
-    fun getUserById(
-        @Header("Authorization") token: String,
-        @Path("id") id: Long
-    ): Call<UserResponse>
-
-    @PUT("api/users/{id}")
-    fun updateUser(
-        @Header("Authorization") token: String,
-        @Path("id") id: Long,
-        @Body request: UserUpdateRequest // Sesuai file UserRequest.kt
-    ): Call<UserResponse>
-
-    @DELETE("api/users/{id}")
-    fun deleteUser(
-        @Header("Authorization") token: String,
-        @Path("id") id: Long
-    ): Call<BaseResponse>
-
-    // ─── KATEGORI ALAT ─────────────────────────────────────────
-    @GET("api/kategori")
-    fun getAllKategori(
-        @Header("Authorization") token: String
-    ): Call<KategoriListResponse> // Jauh lebih ringkas
-
-    @POST("api/kategori")
-    fun createKategori(
-        @Header("Authorization") token: String,
-        @Body request: KategoriRequest
-    ): Call<KategoriResponse>
-
-    @PUT("api/kategori/{id}")
-    fun updateKategori(
-        @Header("Authorization") token: String,
-        @Path("id") id: Long,
-        @Body request: KategoriRequest
-    ): Call<KategoriResponse>
-
     // ─── ALAT ──────────────────────────────────────────────────
-    @GET("api/alat")
-    fun getAllAlat(
-        @Header("Authorization") token: String,
-        @Query("kategori_id") kategoriId: Long? = null,
-        @Query("keyword") keyword: String? = null
-    ): Call<AlatListResponse>
+    @GET("alat/")
+    fun getAllAlat(@Header("Authorization") token: String): Call<AlatListResponse>
 
-    @POST("api/alat")
+    @POST("alat/")
     fun createAlat(
         @Header("Authorization") token: String,
-        @Body request: AlatCreateRequest
+        @Body request: AlatCreateRequest // Diganti ke CreateRequest
     ): Call<AlatResponse>
 
-    @PUT("api/alat/{id}")
+    @GET("alat/{alat_id}")
+    fun getAlatById(@Header("Authorization") token: String, @Path("alat_id") id: Long): Call<AlatResponse>
+
+    @PUT("alat/{alat_id}")
     fun updateAlat(
         @Header("Authorization") token: String,
-        @Path("id") id: Long,
-        @Body request: AlatUpdateRequest
+        @Path("alat_id") id: Long,
+        @Body request: AlatUpdateRequest // Diganti ke UpdateRequest
     ): Call<AlatResponse>
 
-    @GET("api/alat/{id}")
-    fun getAlatById(
-        @Header("Authorization") token: String,
-        @Path("id") id: Long
-    ): Call<AlatResponse> // Mengembalikan 1 objek Alat (Wrapped)
+    @DELETE("alat/{alat_id}")
+    fun deleteAlat(@Header("Authorization") token: String, @Path("alat_id") id: Long): Call<BaseResponse>
 
-    @DELETE("api/alat/{id}")
-    fun deleteAlat(
-        @Header("Authorization") token: String,
-        @Path("id") id: Long
-    ): Call<BaseResponse>
+    // ─── KATEGORI ──────────────────────────────────────────────
+    @GET("kategori/")
+    fun getAllKategori(@Header("Authorization") token: String): Call<KategoriListResponse>
+
+    @POST("kategori/")
+    fun createKategori(@Header("Authorization") token: String, @Body request: KategoriRequest): Call<KategoriResponse>
+
+    @GET("kategori/{kategori_id}")
+    fun getKategoriById(@Header("Authorization") token: String, @Path("kategori_id") id: Long): Call<KategoriResponse>
+
+    @PUT("kategori/{kategori_id}")
+    fun updateKategori(@Header("Authorization") token: String, @Path("kategori_id") id: Long, @Body request: KategoriRequest): Call<KategoriResponse>
+
+    @DELETE("kategori/{kategori_id}")
+    fun deleteKategori(@Header("Authorization") token: String, @Path("kategori_id") id: Long): Call<BaseResponse>
 
     // ─── PEMINJAMAN ────────────────────────────────────────────
-    @GET("api/peminjaman")
-    fun getMyPeminjaman(@Header("Authorization") token: String): Call<PeminjamanListResponse>
+    @GET("peminjaman/")
+    fun getListPeminjaman(@Header("Authorization") token: String): Call<PeminjamanListResponse>
 
-    @GET("api/peminjaman/semua")
-    fun getAllPeminjaman(
-        @Header("Authorization") token: String,
-        @Query("status") status: String? = null
-    ): Call<PeminjamanListResponse>
+    @POST("peminjaman/")
+    fun createPeminjaman(@Header("Authorization") token: String, @Body request: PeminjamanRequest): Call<PeminjamanResponse>
 
-    @POST("api/peminjaman")
-    fun createPeminjaman(
-        @Header("Authorization") token: String,
-        @Body request: PinjamRequest
-    ): Call<PeminjamanResponse>
+    @GET("peminjaman/{peminjaman_id}")
+    fun getDetailPeminjaman(@Header("Authorization") token: String, @Path("peminjaman_id") id: Long): Call<PeminjamanResponse>
 
-    @PUT("api/peminjaman/{id}/approval")
-    fun approvalPeminjaman(
-        @Header("Authorization") token: String,
-        @Path("id") id: Long,
-        @Body request: ApprovalRequest
-    ): Call<PeminjamanResponse>
+    @PUT("peminjaman/{peminjaman_id}/approve")
+    fun approvePeminjaman(@Header("Authorization") token: String, @Path("peminjaman_id") id: Long): Call<BaseResponse>
+
+    @PUT("peminjaman/{peminjaman_id}/reject")
+    fun rejectPeminjaman(@Header("Authorization") token: String, @Path("peminjaman_id") id: Long): Call<BaseResponse>
+
+    @PUT("peminjaman/{peminjaman_id}/ambil")
+    fun ambilAlat(@Header("Authorization") token: String, @Path("peminjaman_id") id: Long): Call<BaseResponse>
+
+    @PUT("peminjaman/{peminjaman_id}/cancel")
+    fun cancelPeminjaman(@Header("Authorization") token: String, @Path("peminjaman_id") id: Long): Call<BaseResponse>
 
     // ─── PENGEMBALIAN ──────────────────────────────────────────
-    @POST("api/pengembalian")
-    fun submitPengembalian(
-        @Header("Authorization") token: String,
-        @Body request: PengembalianRequest // Sesuai file PeminjamanRequest.kt
-    ): Call<PengembalianResponse>
+    @GET("pengembalian/{peminjaman_id}")
+    fun getDetailPengembalian(@Header("Authorization") token: String, @Path("peminjaman_id") id: Long): Call<PengembalianResponse>
 
-    @GET("api/pengembalian/{peminjaman_id}")
-    fun getPengembalianDetail(
-        @Header("Authorization") token: String,
-        @Path("peminjaman_id") peminjamanId: Long
-    ): Call<PengembalianResponse>
+    @POST("pengembalian/")
+    fun createPengembalian(@Header("Authorization") token: String, @Body request: PengembalianRequest): Call<PengembalianResponse>
 
-    // ─── KONDISI LOG ───────────────────────────────────────────
-    @GET("api/alat/{id}/kondisi-log")
-    fun getKondisiLog(
+    @PUT("pengembalian/{peminjaman_id}/verify")
+    fun verifyPengembalian(
         @Header("Authorization") token: String,
-        @Path("id") alatId: Long
-    ): Call<KondisiLogListResponse>
+        @Path("peminjaman_id") id: Long,
+        @Body request: VerifyPengembalianRequest // TAMBAHKAN INI
+    ): Call<BaseResponse>
+
+    // ─── UPLOAD ────────────────────────────────────────────────
+    @Multipart
+    @POST("upload/user/{user_id}")
+    fun uploadUserPhoto(@Header("Authorization") token: String, @Path("user_id") id: Long, @Part foto: MultipartBody.Part): Call<BaseResponse>
+
+    @Multipart
+    @POST("upload/alat/{alat_id}")
+    fun uploadAlatPhoto(@Header("Authorization") token: String, @Path("alat_id") id: Long, @Part foto: MultipartBody.Part): Call<BaseResponse>
 }
