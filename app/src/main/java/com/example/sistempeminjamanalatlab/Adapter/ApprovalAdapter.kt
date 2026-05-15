@@ -23,16 +23,16 @@ class ApprovalAdapter(
         RecyclerView.ViewHolder(itemView) {
 
         val namaPeminjamTxt: TextView =
-            itemView.findViewById(R.id.namaPeminjamTxt)
+            itemView.findViewById(R.id.namaPeminjam)
 
         val namaAlatTxt: TextView =
-            itemView.findViewById(R.id.namaAlatTxt)
+            itemView.findViewById(R.id.tvnamaAlat)
 
         val tanggalTxt: TextView =
-            itemView.findViewById(R.id.tanggalTxt)
+            itemView.findViewById(R.id.tanggal)
 
         val statusTxt: TextView =
-            itemView.findViewById(R.id.statusTxt)
+            itemView.findViewById(R.id.tvstatus)
 
         val alasanTolakEdt: EditText =
             itemView.findViewById(R.id.alasanTolakEdt)
@@ -57,6 +57,14 @@ class ApprovalAdapter(
             )
 
         return ApprovalViewHolder(view)
+    }
+
+    fun removeItem(peminjamanId: Long) {
+        val index = listPeminjaman.indexOfFirst { it.id == peminjamanId }
+        if (index != -1) {
+            (listPeminjaman as MutableList).removeAt(index)
+            notifyItemRemoved(index)
+        }
     }
 
     override fun onBindViewHolder(

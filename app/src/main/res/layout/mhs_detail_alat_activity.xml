@@ -64,6 +64,17 @@
                         android:textStyle="bold" />
 
                     <!-- Condition Badge -->
+
+                    <TextView
+                        android:id="@+id/tvKode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Kode Alat : 12"
+                        android:textColor="#41E0D0"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -87,6 +98,7 @@
                     </LinearLayout>
 
                     <!-- Description Title -->
+
                     <TextView
                         android:id="@+id/tvDescTitle"
                         android:layout_width="wrap_content"
