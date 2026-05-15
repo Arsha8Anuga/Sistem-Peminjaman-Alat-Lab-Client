@@ -16,13 +16,13 @@ class KondisiLogAdapter(
         RecyclerView.ViewHolder(itemView) {
 
         val namaAlatTxt: TextView =
-            itemView.findViewById(R.id.tvnamaAlat)
+            itemView.findViewById(R.id.namaAlatTxt)
 
         val kondisiTxt: TextView =
             itemView.findViewById(R.id.kondisiTxt)
 
         val tanggalTxt: TextView =
-            itemView.findViewById(R.id.tanggal)
+            itemView.findViewById(R.id.tanggalTxt)
 
         val catatanTxt: TextView =
             itemView.findViewById(R.id.catatanTxt)

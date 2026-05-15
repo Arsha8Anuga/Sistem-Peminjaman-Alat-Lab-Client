@@ -81,57 +81,27 @@
                 app:cardElevation="5dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="18dp">
+                        android:text="Alat Kondisi Baik"
+                        android:textColor="#555555"
+                        android:textSize="16sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Alat Kondisi Baik"
-                            android:textColor="#555555"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:id="@+id/kondisiBaikTxt"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="98"
-                            android:textColor="#41A317"
-                            android:textSize="32sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/kondisiBaikTxt"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="18dp">
+                        android:text="98"
+                        android:textColor="#41A317"
+                        android:textSize="32sp"
+                        android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Alat Rusak"
-                            android:textColor="#555555"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:id="@+id/kondisiRusakTxt"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="12"
-                            android:textColor="#D32F2F"
-                            android:textSize="32sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -143,6 +113,30 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alat Rusak"
+                        android:textColor="#555555"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/kondisiRusakTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12"
+                        android:textColor="#D32F2F"
+                        android:textSize="32sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 

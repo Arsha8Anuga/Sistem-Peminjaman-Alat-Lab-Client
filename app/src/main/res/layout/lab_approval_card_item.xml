@@ -15,7 +15,7 @@
 
         <!-- Nama -->
         <TextView
-            android:id="@+id/namaPeminjam"
+            android:id="@+id/namaPeminjamTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fathan Eka"
@@ -29,19 +29,7 @@
 
         <!-- Nama Alat -->
         <TextView
-            android:id="@+id/tvkodePeminjaman"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="0000000"
-            android:textColor="#000000"
-            android:textSize="18sp" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="4dp" />
-
-        <TextView
-            android:id="@+id/tvnamaAlat"
+            android:id="@+id/namaAlatTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Peminjaman: Oscilloscope"
@@ -53,9 +41,8 @@
             android:layout_height="4dp" />
 
         <!-- Tanggal -->
-
         <TextView
-            android:id="@+id/tanggal"
+            android:id="@+id/tanggalTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="12 Mei 2026"
@@ -68,7 +55,7 @@
 
         <!-- Status -->
         <TextView
-            android:id="@+id/tvstatus"
+            android:id="@+id/statusTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Status: Pending"
