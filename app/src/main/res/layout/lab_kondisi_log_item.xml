@@ -15,7 +15,7 @@
 
         <!-- Nama Alat -->
         <TextView
-            android:id="@+id/namaAlatTxt"
+            android:id="@+id/tvnamaAlat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bor Listrik"
@@ -43,7 +43,7 @@
 
         <!-- Tanggal -->
         <TextView
-            android:id="@+id/tanggalTxt"
+            android:id="@+id/tanggal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="12 Mei 2026"
