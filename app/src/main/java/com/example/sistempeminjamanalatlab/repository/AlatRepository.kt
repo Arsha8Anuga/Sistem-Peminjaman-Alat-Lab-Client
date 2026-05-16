@@ -5,6 +5,7 @@ import com.example.sistempeminjamanalatlab.models.entity.Alat
 import com.example.sistempeminjamanalatlab.models.entity.KategoriAlat
 import com.example.sistempeminjamanalatlab.models.request.AlatCreateRequest
 import com.example.sistempeminjamanalatlab.models.request.AlatUpdateRequest
+import com.example.sistempeminjamanalatlab.models.request.KategoriRequest
 import com.example.sistempeminjamanalatlab.models.response.*
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -62,6 +63,48 @@ class AlatRepository(private val apiService: APIService) {
             override fun onFailure(call: Call<KategoriListResponse>, t: Throwable) {
                 onResult(null, t.message)
             }
+        })
+    }
+
+    // --- FITUR KATEGORI (Penyesuaian ke KategoriAlat & Bearer) ---
+
+    fun createKategori(token: String, request: KategoriRequest, callback: (Boolean, String?) -> Unit) {
+        apiService.createKategori("Bearer $token", request).enqueue(object : Callback<KategoriResponse> {
+            override fun onResponse(call: Call<KategoriResponse>, response: Response<KategoriResponse>) {
+                if (response.isSuccessful) callback(true, response.body()?.message ?: "Kategori berhasil dibuat")
+                else callback(false, "Gagal membuat kategori")
+            }
+            override fun onFailure(call: Call<KategoriResponse>, t: Throwable) { callback(false, t.message) }
+        })
+    }
+
+    fun getKategoriById(token: String, id: Long, callback: (KategoriAlat?, String?) -> Unit) {
+        apiService.getKategoriById("Bearer $token", id).enqueue(object : Callback<KategoriResponse> {
+            override fun onResponse(call: Call<KategoriResponse>, response: Response<KategoriResponse>) {
+                if (response.isSuccessful) callback(response.body()?.data, null)
+                else callback(null, "Kategori tidak ditemukan")
+            }
+            override fun onFailure(call: Call<KategoriResponse>, t: Throwable) { callback(null, t.message) }
+        })
+    }
+
+    fun updateKategori(token: String, id: Long, request: KategoriRequest, callback: (Boolean, String?) -> Unit) {
+        apiService.updateKategori("Bearer $token", id, request).enqueue(object : Callback<KategoriResponse> {
+            override fun onResponse(call: Call<KategoriResponse>, response: Response<KategoriResponse>) {
+                if (response.isSuccessful) callback(true, response.body()?.message ?: "Kategori berhasil diupdate")
+                else callback(false, "Gagal mengupdate kategori")
+            }
+            override fun onFailure(call: Call<KategoriResponse>, t: Throwable) { callback(false, t.message) }
+        })
+    }
+
+    fun deleteKategori(token: String, id: Long, callback: (Boolean, String?) -> Unit) {
+        apiService.deleteKategori("Bearer $token", id).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+                if (response.isSuccessful) callback(true, response.body()?.message ?: "Kategori berhasil dihapus")
+                else callback(false, "Gagal menghapus kategori")
+            }
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) { callback(false, t.message) }
         })
     }
 

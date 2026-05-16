@@ -4,10 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.sistempeminjamanalatlab.models.request.LoginRequest
-import com.example.sistempeminjamanalatlab.models.request.UserCreateRequest
 import com.example.sistempeminjamanalatlab.repository.AuthRepository
-import com.example.sistempeminjamanalatlab.utils.SessionManager
-import android.content.Context
+import com.example.sistempeminjamanalatlab.models.response.LoginData
 
 class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
 
@@ -23,15 +21,17 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     private val _loginSuccess = MutableLiveData<Boolean>()
     val loginSuccess: LiveData<Boolean> = _loginSuccess
 
-    // ─── FUNGSI LOGIN ──────────────────────────────────────────
+    // Tambahkan LiveData ini di AuthViewModel
+    private val _loginData = MutableLiveData<LoginData?>()
+    val loginData: LiveData<LoginData?> = _loginData
 
-    fun login(context: Context, request: LoginRequest) {
+    // Sesuaikan fungsi login-nya menjadi seperti ini (Tanpa Context)
+    fun login(request: LoginRequest) {
         _isLoading.value = true
         repository.login(request) { data, msg ->
             _isLoading.value = false
             if (data != null) {
-                // Simpan token dan data dasar ke SharedPreferences
-                SessionManager.saveLoginSession(context, data)
+                _loginData.value = data // Simpan data ke LiveData agar di-observe Activity
                 _loginSuccess.value = true
                 _message.value = "Selamat Datang, ${data.nama}!"
             } else {
@@ -39,6 +39,11 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
                 _message.value = msg ?: "Login Gagal, periksa kembali akun Anda"
             }
         }
+    }
+
+    /** Reset state setelah navigasi ke Dashboard dilakukan */
+    fun resetLoginState() {
+        _loginSuccess.value = false
     }
 
     // ─── FUNGSI REGISTER ───────────────────────────────────────

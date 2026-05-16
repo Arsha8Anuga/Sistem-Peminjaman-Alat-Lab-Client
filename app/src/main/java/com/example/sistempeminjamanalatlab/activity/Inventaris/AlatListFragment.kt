@@ -5,61 +5,97 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.sistempeminjamanalatlab.Adapter.AlatAdapter
-import com.example.sistempeminjamanalatlab.databinding.LabLaporanKondisiActivityBinding
-import com.example.sistempeminjamanalatlab.models.entity.Alat
-import com.example.sistempeminjamanalatlab.models.response.AlatListResponse
-import com.example.sistempeminjamanalatlab.network.APIClient
+import com.example.sistempeminjamanalatlab.R
 import com.example.sistempeminjamanalatlab.api.APIService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.sistempeminjamanalatlab.network.APIClient
+import com.example.sistempeminjamanalatlab.repository.AlatRepository
+import com.example.sistempeminjamanalatlab.utils.SessionManager
+import com.example.sistempeminjamanalatlab.viewmodel.AlatViewModel
+import com.example.sistempeminjamanalatlab.viewmodel.ViewModelFactory
 
 class AlatListFragment : Fragment() {
-    private var _binding: LabLaporanKondisiActivityBinding? = null
-    private val binding get() = _binding!!
-    private val apiService = APIClient.buildService(APIService::class.java)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = LabLaporanKondisiActivityBinding.inflate(inflater, container, false)
-        return binding.root
+    // Deklarasi View Klasik
+    private lateinit var rvAlat: RecyclerView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var adapter: AlatAdapter
+    private lateinit var viewModel: AlatViewModel
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // 1. Inflate layout secara manual
+        val view = inflater.inflate(R.layout.lab_laporan_kondisi_activity, container, false)
+
+        // 2. Inisialisasi View menggunakan findViewById dari objek 'view'
+        rvAlat = view.findViewById(R.id.recyclerKondisiLog)
+        progressBar = view.findViewById(R.id.progressBar) // Pastikan ID ini ada di XML
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupViewModel()
         setupRecyclerView()
-        fetchAlatData()
+        observeViewModel()
+
+        // 3. Ambil data
+        val token = SessionManager.getBearerToken(requireContext()) ?: ""
+        viewModel.fetchAllAlat(token)
     }
 
     private fun setupRecyclerView() {
-        binding.recyclerKondisiLog.layoutManager = GridLayoutManager(requireContext(), 2) // Grid layout seperti AlatAdapter [cite: 25]
+        // Menggunakan GridLayoutManager 2 kolom sesuai permintaan
+        rvAlat.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        adapter = AlatAdapter(arrayListOf()) { alat ->
+            // Navigasi ke detail saat item diklik
+            val intent = Intent(requireContext(), AlatDetailActivity::class.java)
+            intent.putExtra("ALAT_ID", alat.id)
+            startActivity(intent)
+        }
+        rvAlat.adapter = adapter
     }
 
-    private fun fetchAlatData() {
-        val token = "Bearer YOUR_TOKEN_HERE"
-        apiService.getAllAlat(token).enqueue(object : Callback<AlatListResponse> {
-            override fun onResponse(call: Call<AlatListResponse>, response: Response<AlatListResponse>) {
-                if (response.isSuccessful) {
-                    val listAlat = response.body()?.data ?: emptyList()
-                    binding.recyclerKondisiLog.adapter = AlatAdapter(listAlat) { alat ->
-                        val intent = Intent(requireContext(), AlatDetailActivity::class.java)
-                        intent.putExtra("ALAT_ID", alat.id)
-                        startActivity(intent)
-                    }
-                }
-            }
+    private fun setupViewModel() {
+        val apiService = APIClient.buildService(APIService::class.java)
+        val repo = AlatRepository(apiService)
 
-            override fun onFailure(call: Call<AlatListResponse>, t: Throwable) {
-                Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        // Diubah menggunakan helper static .getInstance() agar sinkron dengan Factory baru
+        val factory = ViewModelFactory.getInstance(repo)
+
+        // ViewModelProvider menggunakan 'this' (Fragment Lifecycle) sudah tepat
+        viewModel = ViewModelProvider(this, factory).get(AlatViewModel::class.java)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun observeViewModel() {
+        // Pantau Loading State
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        // Pantau List Data
+        viewModel.listAlat.observe(viewLifecycleOwner) { list ->
+            if (list != null) {
+                adapter.setData(list)
+            }
+        }
+
+        // Pantau Error Message
+        viewModel.message.observe(viewLifecycleOwner) { msg ->
+            if (msg != null) {
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

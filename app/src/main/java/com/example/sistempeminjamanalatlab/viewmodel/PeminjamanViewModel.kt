@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.sistempeminjamanalatlab.models.entity.Peminjaman
 import com.example.sistempeminjamanalatlab.models.request.PeminjamanRequest
-import com.example.sistempeminjamanalatlab.models.request.VerifyPengembalianRequest
 import com.example.sistempeminjamanalatlab.repository.PeminjamanRepository
 
 class PeminjamanViewModel(private val repository: PeminjamanRepository) : ViewModel() {
@@ -42,12 +41,21 @@ class PeminjamanViewModel(private val repository: PeminjamanRepository) : ViewMo
     }
 
     /** Mengambil riwayat peminjaman (baik untuk Mhs maupun List All untuk Laboran) */
-    fun fetchHistory(token: String) {
+    fun fetchAllPeminjaman(token: String) {
         _isLoading.value = true
         repository.getMyLoanHistory(token) { data, msg ->
             _isLoading.value = false
             _listPeminjaman.value = data
             if (data == null) _message.value = msg ?: "Gagal memuat riwayat"
+        }
+    }
+
+    fun cancelLoan(token: String, loanId: Long) {
+        _isLoading.value = true
+        repository.cancelPeminjaman(token, loanId) { success, msg ->
+            _isLoading.value = false
+            _message.value = msg
+            _actionSuccess.value = success
         }
     }
 
@@ -93,13 +101,9 @@ class PeminjamanViewModel(private val repository: PeminjamanRepository) : ViewMo
         }
     }
 
-    /** Laboran memverifikasi pengembalian alat (Status: On Loan -> Returned/Done) */
-    fun verifyReturn(token: String, loanId: Long, request: VerifyPengembalianRequest) {
-        _isLoading.value = true
-        repository.verifyPengembalian(token, loanId, request) { success, msg ->
-            _isLoading.value = false
-            _message.value = msg
-            _actionSuccess.value = success
-        }
+    fun resetActionState() {
+        _actionSuccess.value = false
+        // Jika perlu, bersihkan juga pesan lama
+        // _message.value = ""
     }
 }

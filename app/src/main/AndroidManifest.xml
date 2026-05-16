@@ -13,7 +13,7 @@
         android:theme="@style/Theme.SistemPeminjamanAlatLab"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.dashboard.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,95 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/gradient_card"
-    tools:context=".activity.MainActivity">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!-- Fragment Container -->
-    <FrameLayout
-        android:id="@+id/fragmentContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Bottom Navigation Container -->
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:backgroundTint="#FFFFFF"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp">
+
+        <TextView
+            android:id="@+id/tvWelcomeMhs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Katalog Alat Lab"
+            android:textColor="#FFFFFF"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Silakan pilih alat yang ingin Anda pinjam"
+            android:textColor="#E0F7FA"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:cardCornerRadius="24dp"
-        app:cardElevation="10dp"
-        app:strokeColor="#EAEAEA"
-        app:strokeWidth="1dp">
+        app:cardElevation="6dp"
+        android:backgroundTint="#FFFFFF"
+        app:strokeWidth="0dp">
 
-        <!-- Bottom Navigation -->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
+            android:layout_height="match_parent"
+            android:padding="16dp">
 
-            <!-- Dashboard -->
-            <LinearLayout
-                android:id="@+id/navDashboard"
-                android:layout_width="0dp"
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                android:indeterminateTint="#41E0D0" />
 
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@android:drawable/ic_menu_view"
-                    app:tint="#111111" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAlat"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_alat" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Dashboard"
-                    android:textColor="#111111"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <!-- Riwayat -->
-            <LinearLayout
-                android:id="@+id/navRiwayat"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@android:drawable/ic_menu_recent_history"
-                    app:tint="#9AA5A5" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Riwayat"
-                    android:textColor="#9AA5A5"
-                    android:textSize="11sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
+        </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

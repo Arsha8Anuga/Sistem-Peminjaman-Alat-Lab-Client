@@ -7,6 +7,7 @@ import com.example.sistempeminjamanalatlab.models.entity.Alat
 import com.example.sistempeminjamanalatlab.models.entity.KategoriAlat
 import com.example.sistempeminjamanalatlab.models.request.AlatCreateRequest
 import com.example.sistempeminjamanalatlab.models.request.AlatUpdateRequest
+import com.example.sistempeminjamanalatlab.models.request.KategoriRequest
 import com.example.sistempeminjamanalatlab.repository.AlatRepository
 import okhttp3.MultipartBody
 
@@ -29,6 +30,9 @@ class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
 
     private val _message = MutableLiveData<String>()
     val message: LiveData<String> = _message
+
+    private val _kategoriDetail = MutableLiveData<KategoriAlat?>()
+    val kategoriDetail: LiveData<KategoriAlat?> = _kategoriDetail
 
     // Flag sukses untuk navigasi (setelah tambah/update/hapus)
     private val _actionSuccess = MutableLiveData<Boolean>()
@@ -71,6 +75,21 @@ class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
         }
     }
 
+    fun fetchKategoriById(token: String, id: Long) {
+        _isLoading.value = true
+
+        // Memanggil fungsi repo yang tadi kamu tunjukkan
+        repository.getKategoriById(token, id) { data, msg ->
+            _isLoading.value = false
+            _kategoriDetail.value = data
+
+            // Jika gagal dan ada pesan error, teruskan ke LiveData message
+            if (data == null && msg != null) {
+                _message.value = msg
+            }
+        }
+    }
+
     fun updateAlat(token: String, id: Long, request: AlatUpdateRequest) {
         _isLoading.value = true
         repository.updateAlat(token, id, request) { success, msg ->
@@ -91,6 +110,48 @@ class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
                 fetchAllAlat(token)
             }
         }
+    }
+
+    // ─── FUNGSI MANAJEMEN KATEGORI (Tambahan Baru agar Repo Terpakai Semua) ──────────────────
+
+    /** Menambahkan Kategori Alat Baru (Admin/Laboran) */
+    fun insertKategori(token: String, request: KategoriRequest) {
+        _isLoading.value = true
+        repository.createKategori(token, request) { success, msg ->
+            _isLoading.value = false
+            _message.value = msg ?: if (success) "Kategori berhasil dibuat" else "Gagal membuat kategori"
+            _actionSuccess.value = success
+            if (success) fetchKategori(token) // Refresh list kategori otomatis
+        }
+    }
+
+    /** Mengupdate Nama Kategori Alat (Admin/Laboran) */
+    fun updateKategori(token: String, id: Long, request: KategoriRequest) {
+        _isLoading.value = true
+        repository.updateKategori(token, id, request) { success, msg ->
+            _isLoading.value = false
+            _message.value = msg ?: if (success) "Kategori berhasil diupdate" else "Gagal mengupdate kategori"
+            _actionSuccess.value = success
+            if (success) fetchKategori(token) // Refresh list kategori otomatis
+        }
+    }
+
+    /** Menghapus Kategori Alat (Admin/Laboran) */
+    fun deleteKategori(token: String, id: Long) {
+        _isLoading.value = true
+        repository.deleteKategori(token, id) { success, msg ->
+            _isLoading.value = false
+            _message.value = msg ?: if (success) "Kategori berhasil dihapus" else "Gagal menghapus kategori"
+            if (success) {
+                _actionSuccess.value = true
+                fetchKategori(token) // Refresh list kategori otomatis
+            }
+        }
+    }
+
+    /** Reset state actionSuccess agar navigasi tidak terpicu berulang kali */
+    fun resetActionState() {
+        _actionSuccess.value = false
     }
 
     // ─── UPLOAD FOTO ──────────────────────────────────────────

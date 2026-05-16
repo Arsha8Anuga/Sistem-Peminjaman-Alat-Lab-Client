@@ -5,29 +5,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import com.example.sistempeminjamanalatlab.models.entity.Peminjaman
-import com.example.sistempeminjamanalatlab.models.response.WrappedResponse
-import retrofit2.Call
-import retrofit2.http.*
-
-
-interface ApiService {
-    @GET("peminjaman")
-    fun getAllPeminjaman(@Header("Authorization") token: String): Call<WrappedResponse<List<Peminjaman>>>
-
-    @PUT("peminjaman/{id}/approve")
-    fun approvePeminjaman(
-        @Header("Authorization") token: String,
-        @Path("id") id: Long
-    ): Call<WrappedResponse<Peminjaman>>
-
-    @PUT("peminjaman/{id}/reject")
-    fun rejectPeminjaman(
-        @Header("Authorization") token: String,
-        @Path("id") id: Long,
-        @Query("catatan") catatan: String
-    ): Call<WrappedResponse<Peminjaman>>
-}
 
 object APIClient {
     // 1. Sesuaikan URL dengan server Python kamu

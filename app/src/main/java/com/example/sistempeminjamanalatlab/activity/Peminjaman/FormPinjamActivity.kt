@@ -2,77 +2,144 @@ package com.example.sistempeminjamanalatlab.peminjaman
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.sistempeminjamanalatlab.Adapter.CartAdapter
+import androidx.lifecycle.ViewModelProvider
+import com.example.sistempeminjamanalatlab.R
 import com.example.sistempeminjamanalatlab.api.APIService
-import com.example.sistempeminjamanalatlab.databinding.ActivityFormPinjamBinding
-import com.example.sistempeminjamanalatlab.models.request.PeminjamanRequest
 import com.example.sistempeminjamanalatlab.models.request.DetailPeminjamanRequest
-import com.example.sistempeminjamanalatlab.models.response.PeminjamanResponse
+import com.example.sistempeminjamanalatlab.models.request.PeminjamanRequest
 import com.example.sistempeminjamanalatlab.network.APIClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.sistempeminjamanalatlab.repository.PeminjamanRepository
+import com.example.sistempeminjamanalatlab.utils.SessionManager
+import com.example.sistempeminjamanalatlab.viewmodel.PeminjamanViewModel
+import com.example.sistempeminjamanalatlab.viewmodel.ViewModelFactory
 import java.util.*
 
 class FormPinjamActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityFormPinjamBinding
-    private val apiService = APIClient.buildService(APIService::class.java)
 
-    // Simulasi data dari keranjang (biasanya dilempar via Intent atau Singleton)
-    private var listSelectedAlat = mutableListOf<DetailPeminjamanRequest>()
+    // View Klasik
+    private lateinit var etTanggalPinjam: EditText
+    private lateinit var etTanggalKembali: EditText
+    private lateinit var etTujuan: EditText
+    private lateinit var btnSubmit: Button
+    private lateinit var progressBar: ProgressBar
+
+    private lateinit var viewModel: PeminjamanViewModel
+    private var selectedAlatId: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFormPinjamBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_form_pinjam)
+
+        initViews()
+        setupViewModel()
+        observeViewModel()
+
+        // Ambil ID alat yang dikirim dari DetailAlat (jika ada)
+        selectedAlatId = intent.getLongExtra("ALAT_ID", -1L)
 
         setupDatePickers()
 
-        binding.btnSubmitPinjam.setOnClickListener {
+        btnSubmit.setOnClickListener {
             prosesPeminjaman()
         }
     }
 
-    private fun setupDatePickers() {
-        binding.etTanggalPinjam.setOnClickListener {
-            val c = Calendar.getInstance()
-            DatePickerDialog(this, { _, y, m, d ->
-                binding.etTanggalPinjam.setText("$y-${m + 1}-$d")
-            }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show()
+    private fun initViews() {
+        etTanggalPinjam = findViewById(R.id.etTanggalPinjam)
+        etTanggalKembali = findViewById(R.id.etTanggalKembali)
+        etTujuan = findViewById(R.id.etTujuan)
+        btnSubmit = findViewById(R.id.btnSubmitPinjam)
+        progressBar = findViewById(R.id.progressBar)
+    }
+
+    // ─── PERBAIKAN INISIALISASI VIEWMODEL FACTORY VIA HELPER ─────────────────────
+
+    private fun setupViewModel() {
+        val apiService = APIClient.buildService(APIService::class.java)
+        val repo = PeminjamanRepository(apiService)
+
+        // Diubah menggunakan helper static .getInstance() agar sinkron dengan Factory baru kita
+        val factory = ViewModelFactory.getInstance(repo)
+
+        viewModel = ViewModelProvider(this, factory).get(PeminjamanViewModel::class.java)
+    }
+
+    private fun observeViewModel() {
+        viewModel.isLoading.observe(this) {
+            progressBar.visibility = if (it) View.VISIBLE else View.GONE
+            btnSubmit.isEnabled = !it
+        }
+
+        viewModel.message.observe(this) { msg ->
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        }
+
+        // Jika sukses submit, tutup halaman
+        viewModel.actionSuccess.observe(this) { success ->
+            if (success) {
+                Toast.makeText(this, "Pengajuan berhasil dikirim!", Toast.LENGTH_LONG).show()
+                finish()
+            }
         }
     }
 
-    private fun prosesPeminjaman() {
-        val tglPinjam = binding.etTanggalPinjam.text.toString()
-        val tglKembali = binding.etTanggalKembali.text.toString()
-        val tujuan = binding.etTujuan.text.toString()
+    private fun setupDatePickers() {
+        val calendar = Calendar.getInstance()
 
-        if (tglPinjam.isEmpty() || tglKembali.isEmpty()) {
-            Toast.makeText(this, "Lengkapi tanggal!", Toast.LENGTH_SHORT).show()
+        val dateSetListener = { view: View, et: EditText ->
+            et.setOnClickListener {
+                DatePickerDialog(this, { _, y, m, d ->
+                    // Format tanggal sesuai kebutuhan Backend (YYYY-MM-DD)
+                    val formattedDate = String.format("%04d-%02d-%02d", y, m + 1, d)
+                    et.setText(formattedDate)
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+            }
+        }
+
+        dateSetListener(etTanggalPinjam, etTanggalPinjam)
+        dateSetListener(etTanggalKembali, etTanggalKembali)
+    }
+
+    private fun prosesPeminjaman() {
+        // Ambil input dari form UI klasik
+        val tglKembali = etTanggalKembali.text.toString()
+        val catatanPeminjaman = etTujuan.text.toString() // Kita petakan input tujuan ke 'catatan'
+
+        // Validasi input wajib
+        if (tglKembali.isEmpty()) {
+            Toast.makeText(this, "Harap tentukan tanggal pengembalian!", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val token = "Bearer YOUR_TOKEN"
-        val request = PeminjamanRequest(
-            tanggalPinjam = tglPinjam,
-            tanggalKembali = tglKembali,
-            tujuanPeminjaman = tujuan,
-            items = listSelectedAlat // List alat yang sudah dipilih
+        if (selectedAlatId == -1L) {
+            Toast.makeText(this, "Alat belum dipilih!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val token = SessionManager.getBearerToken(this) ?: ""
+
+        // 1. Membungkus item alat ke dalam list bertipe DetailPeminjamanRequest
+        val detailsList = listOf(
+            DetailPeminjamanRequest(
+                alatId = selectedAlatId,
+                jumlah = 1 // Default 1, bisa disesuaikan dengan input kuantitas jika ada
+            )
         )
 
-        apiService.createPeminjaman(token, request).enqueue(object : Callback<PeminjamanResponse> {
-            override fun onResponse(call: Call<PeminjamanResponse>, response: Response<PeminjamanResponse>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@FormPinjamActivity, "Berhasil Mengajukan!", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-            }
-            override fun onFailure(call: Call<PeminjamanResponse>, t: Throwable) {
-                Toast.makeText(this@FormPinjamActivity, "Gagal: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        // 2. Inisialisasi objek PeminjamanRequest (SEKARANG SUDAH 100% SINKRON)
+        val request = PeminjamanRequest(
+            tanggalRencanaKembali = tglKembali,
+            catatan = catatanPeminjaman,
+            details = detailsList
+        )
+
+        // 3. Kirim ke ViewModel
+        viewModel.submitPeminjaman(token, request)
     }
 }

@@ -64,4 +64,9 @@ class PengembalianViewModel(private val repository: PengembalianRepository) : Vi
             _actionSuccess.value = success
         }
     }
+
+    /** Reset flag actionSuccess agar tidak memicu navigasi balik berulang di Activity */
+    fun resetActionState() {
+        _actionSuccess.value = false
+    }
 }

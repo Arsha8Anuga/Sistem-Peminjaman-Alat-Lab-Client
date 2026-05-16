@@ -6,7 +6,6 @@ import retrofit2.Response
 import com.example.sistempeminjamanalatlab.models.response.*
 import com.example.sistempeminjamanalatlab.api.APIService
 import com.example.sistempeminjamanalatlab.models.request.LoginRequest
-import com.example.sistempeminjamanalatlab.models.request.UserCreateRequest
 
 class AuthRepository(private val apiService: APIService) {
     fun login(request: LoginRequest, onResult: (LoginData?, String?) -> Unit) {
@@ -20,7 +19,7 @@ class AuthRepository(private val apiService: APIService) {
         })
     }
 
-    fun register(request: UserCreateRequest, onResult: (Boolean, String?) -> Unit) {
+    /*fun register(request: UserCreateRequest, onResult: (Boolean, String?) -> Unit) {
         apiService.registerUser(request).enqueue(object : Callback<BaseResponse> {
             override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
@@ -29,5 +28,5 @@ class AuthRepository(private val apiService: APIService) {
                 onResult(false, t.message)
             }
         })
-    }
+    }*/
 }
