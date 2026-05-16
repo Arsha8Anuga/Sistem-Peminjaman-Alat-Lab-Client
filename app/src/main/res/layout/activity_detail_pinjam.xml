@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="20dp"
-            android:paddingBottom="40dp">
+            android:paddingBottom="36dp">
 
             <!-- Back + Title Row -->
             <LinearLayout
@@ -41,14 +41,28 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Detail Alat"
+                    android:text="Detail Peminjaman"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
+                <!-- Badge Status -->
+                <TextView
+                    android:id="@+id/tvstatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_badge_kondisi"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="PENDING"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Icon + Nama Alat -->
+            <!-- Icon + Kode Peminjaman -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,41 +70,39 @@
                 android:gravity="center">
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="88dp"
-                    android:layout_height="88dp"
-                    app:cardCornerRadius="44dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:cardCornerRadius="40dp"
                     app:cardElevation="8dp"
                     app:cardBackgroundColor="#1DE9B6"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="14dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="🔬"
-                        android:textSize="34sp" />
+                        android:text="📋"
+                        android:textSize="32sp" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView
-                    android:id="@+id/tvNamaAlat"
+                    android:id="@+id/tvkodePeminjaman"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nama Alat"
+                    android:text="—"
                     android:textColor="#FFFFFF"
-                    android:textSize="24sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
                     android:gravity="center" />
 
                 <TextView
-                    android:id="@+id/tvKode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Kode: —"
+                    android:layout_marginTop="4dp"
+                    android:text="Kode Peminjaman"
                     android:textColor="#E0F7FA"
-                    android:textSize="14sp"
+                    android:textSize="13sp"
                     android:gravity="center" />
-
             </LinearLayout>
         </LinearLayout>
 
@@ -119,57 +131,7 @@
                     android:layout_marginBottom="8dp"
                     android:visibility="gone" />
 
-                <!-- ─── STOK CARD ──────────────────────────────────────── -->
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="3dp"
-                    app:cardBackgroundColor="#E0F7FA"
-                    android:layout_marginBottom="24dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="📦"
-                            android:textSize="24sp"
-                            android:layout_marginEnd="12dp" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Ketersediaan Stok"
-                                android:textColor="#00838F"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tvStok"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Stok Tersedia: — / —"
-                                android:textColor="#006064"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- ─── INFORMASI ALAT ─────────────────────────────────── -->
+                <!-- ─── INFO PEMINJAM ──────────────────────────────────── -->
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -187,13 +149,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Informasi Alat"
+                        android:text="Informasi Peminjam"
                         android:textColor="#222222"
                         android:textSize="17sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- Kondisi -->
+                <!-- Nama Peminjam -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -206,7 +168,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="⚙️"
+                        android:text="👤"
                         android:textSize="18sp"
                         android:layout_marginEnd="12dp" />
 
@@ -219,22 +181,22 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Kondisi Fisik"
+                            android:text="Nama Peminjam"
                             android:textColor="#888888"
                             android:textSize="11sp" />
 
                         <TextView
-                            android:id="@+id/tvKondisi"
+                            android:id="@+id/namaPeminjam"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Kondisi: —"
+                            android:text="—"
                             android:textColor="#222222"
                             android:textSize="14sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Kategori -->
+                <!-- Tanggal Pinjam -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -242,56 +204,14 @@
                     android:background="@drawable/bg_input_field"
                     android:padding="14dp"
                     android:gravity="center_vertical"
-                    android:layout_marginBottom="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🏷️"
-                        android:textSize="18sp"
-                        android:layout_marginEnd="12dp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Kategori"
-                            android:textColor="#888888"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:id="@+id/tvKategori"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Kategori: —"
-                            android:textColor="#222222"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Deskripsi -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/bg_input_field"
-                    android:padding="14dp"
-                    android:gravity="top"
                     android:layout_marginBottom="24dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📝"
+                        android:text="📅"
                         android:textSize="18sp"
-                        android:layout_marginEnd="12dp"
-                        android:layout_marginTop="2dp" />
+                        android:layout_marginEnd="12dp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -302,18 +222,18 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Deskripsi"
+                            android:text="Tanggal Pinjam"
                             android:textColor="#888888"
                             android:textSize="11sp" />
 
                         <TextView
-                            android:id="@+id/tvDeskripsi"
+                            android:id="@+id/tanggal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
                             android:text="—"
-                            android:textColor="#444444"
-                            android:textSize="14sp" />
+                            android:textColor="#222222"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -324,30 +244,121 @@
                     android:background="#F0F0F0"
                     android:layout_marginBottom="20dp" />
 
-                <!-- ─── TOMBOL AKSI ─────────────────────────────────────── -->
+                <!-- ─── CATATAN / KETERANGAN ────────────────────────── -->
 
-                <!-- Tombol Pinjam (Mahasiswa) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="22dp"
+                        android:background="#00BCD4"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Keterangan"
+                        android:textColor="#222222"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvCatatan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input_field"
+                    android:padding="14dp"
+                    android:text="—"
+                    android:textColor="#444444"
+                    android:textSize="13sp"
+                    android:minHeight="60dp"
+                    android:gravity="top|start"
+                    android:layout_marginBottom="24dp" />
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0"
+                    android:layout_marginBottom="20dp" />
+
+                <!-- ─── TOMBOL AKSI ─────────────────────────────────── -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="22dp"
+                        android:background="#00BCD4"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tindakan"
+                        android:textColor="#222222"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Tombol Approve & Reject (baris horizontal) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginBottom="12dp">
+
+                    <!-- Tombol Approve -->
+                    <Button
+                        android:id="@+id/btnApprove"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/gradient_card"
+                        android:text="✓  Setujui"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <!-- Tombol Reject / Batalkan -->
+                    <Button
+                        android:id="@+id/btnReject"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:backgroundTint="#F44336"
+                        android:text="✕  Tolak"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <!-- Tombol Konfirmasi Pengambilan (full width, muncul saat Approved) -->
                 <Button
-                    android:id="@+id/btnPinjam"
+                    android:id="@+id/btnAmbilAlat"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:background="@drawable/gradient_card"
-                    android:text="AJUKAN PEMINJAMAN"
+                    android:text="Konfirmasi Pengambilan Alat"
                     android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:visibility="visible" />
-
-                <!-- Tombol Hapus (Staff/Laboran) -->
-                <Button
-                    android:id="@+id/btnDeleteAlat"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="10dp"
-                    android:backgroundTint="#F44336"
-                    android:text="🗑  HAPUS ALAT"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
 

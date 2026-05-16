@@ -30,7 +30,7 @@ class LaboranActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.lab_activity)
+        setContentView(R.layout.activity_laboran)
 
         rvPeminjaman = findViewById(R.id.rvPeminjaman)
         progressBar = findViewById(R.id.progressBar)

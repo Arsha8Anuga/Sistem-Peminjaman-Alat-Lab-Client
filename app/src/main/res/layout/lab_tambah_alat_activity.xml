@@ -2,33 +2,67 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_card"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient_card"
-        android:gravity="center|center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Tambah / Edit Alat"
-            android:textColor="#000000"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+        <!-- ─── HEADER ──────────────────────────────────────────────────── -->
 
-        <Space
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="10dp" />
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="350dp"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="25dp"
-            app:cardElevation="8dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:src="@android:drawable/ic_menu_revert"
+                android:tint="#FFFFFF"
+                android:layout_marginEnd="12dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manajemen Alat"
+                    android:textColor="#E0F7FA"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tambah / Edit Alat"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ─── FORM CARD ────────────────────────────────────────────────── -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="6dp"
+            android:backgroundTint="#FFFFFF"
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,170 +70,336 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- Judul -->
+                <!-- Accent + Judul Seksi -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="20dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="22dp"
+                        android:background="#00BCD4"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Informasi Alat"
+                        android:textColor="#222222"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <!-- Nama Alat -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nama Alat"
+                    android:textColor="#555555"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
                 <EditText
                     android:id="@+id/namaAlat"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#41E2D2"
-                    android:hint="Nama Alat"
-                    android:inputType="textPersonName"
-                    android:padding="12dp" />
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Contoh: Oscilloscope"
+                    android:inputType="textCapWords"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="#222222"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
 
                 <!-- Kode Alat -->
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kode Alat"
+                    android:textColor="#555555"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
 
                 <EditText
                     android:id="@+id/kodeAlat"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#41E2D2"
-                    android:hint="Kode Alat"
-                    android:inputType="text"
-                    android:padding="12dp" />
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Contoh: OSC-001"
+                    android:inputType="textCapCharacters"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="#222222"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
 
                 <!-- Stok -->
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
-
-                <!-- Kondisi -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stok Total"
+                    android:textColor="#555555"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
 
                 <EditText
                     android:id="@+id/stokAlat"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#41E2D2"
-                    android:hint="Jumlah Stok"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Contoh: 10"
                     android:inputType="number"
-                    android:padding="12dp" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
-
-                <TextView
-                    android:id="@+id/textKondisi"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Kondisi Alat"
-                    android:textSize="20sp" />
-
-                <RadioGroup
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="left"
-                    android:orientation="vertical">
-
-                    <RadioButton
-                        android:id="@+id/radiobuttonbaik"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="baik" />
-
-                    <RadioButton
-                        android:id="@+id/radiobuttonrusakringan"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="rusak ringan" />
-
-                    <RadioButton
-                        android:id="@+id/radiobuttonrusakberat"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="rusak berat" />
-                </RadioGroup>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
-
-                <Spinner
-                    android:id="@+id/spinnerKategori"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="48dp" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="15dp" />
-
-                <!-- Upload Foto -->
-                <ImageView
-                    android:id="@+id/imagePreview"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_gravity="center"
-                    android:background="#D9D9D9"
-                    android:scaleType="centerCrop"
-                    android:src="@android:drawable/ic_menu_gallery" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
-
-                <Button
-                    android:id="@+id/uploadFotoBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#41E2D2"
-                    android:text="Upload Foto"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="15dp" />
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="#222222"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
 
                 <!-- Deskripsi -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Deskripsi"
+                    android:textColor="#555555"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <!-- Divider -->
                 <EditText
                     android:id="@+id/deskripsiAlat"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:backgroundTint="#41E2D2"
-                    android:gravity="top"
-                    android:hint="Deskripsi Alat"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/bg_input_field"
+                    android:gravity="top|start"
+                    android:hint="Tambahkan deskripsi alat..."
                     android:inputType="textMultiLine"
-                    android:padding="12dp" />
+                    android:paddingStart="14dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="#222222"
+                    android:textSize="14sp" />
 
-                <Space
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="20dp" />
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0"
+                    android:layout_marginBottom="20dp" />
 
-                <!-- Tombol -->
+                <!-- Kategori Section Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="22dp"
+                        android:background="#00BCD4"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Kategori Alat"
+                        android:textColor="#222222"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <!-- Tombol Tambah Kategori -->
+                    <ImageButton
+                        android:id="@+id/btnTambahKategori"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/gradient_card"
+                        android:src="@android:drawable/ic_input_add"
+                        android:tint="#FFFFFF"
+                        android:layout_marginEnd="8dp"
+                        app:tint="#FFFFFF" />
+
+                    <!-- Tombol Edit Kategori -->
+                    <ImageButton
+                        android:id="@+id/btnEditKategori"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/gradient_card"
+                        android:src="@android:drawable/ic_menu_edit"
+                        android:tint="#FFFFFF"
+                        app:tint="#FFFFFF" />
+
+                </LinearLayout>
+
+                <!-- Spinner Kategori -->
+                <Spinner
+                    android:id="@+id/spinnerKategori"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_input_field"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:layout_marginBottom="20dp" />
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0"
+                    android:layout_marginBottom="20dp" />
+
+                <!-- Kondisi Fisik -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="22dp"
+                        android:background="#00BCD4"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kondisi Fisik"
+                        android:textColor="#222222"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <RadioGroup
+                    android:id="@+id/radioGroupKondisi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="24dp">
+
+                    <!-- Baik -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_input_field"
+                        android:layout_marginBottom="10dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp">
+
+                        <RadioButton
+                            android:id="@+id/radiobuttonbaik"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:text="Baik"
+                            android:textColor="#222222"
+                            android:textSize="14sp"
+                            android:buttonTint="#00BCD4"
+                            android:checked="true" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🟢"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <!-- Rusak Ringan -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_input_field"
+                        android:layout_marginBottom="10dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp">
+
+                        <RadioButton
+                            android:id="@+id/radiobuttonrusakringan"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:text="Rusak Ringan"
+                            android:textColor="#222222"
+                            android:textSize="14sp"
+                            android:buttonTint="#FF9800" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🟡"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <!-- Rusak Berat -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp">
+
+                        <RadioButton
+                            android:id="@+id/radiobuttonrusakberat"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:text="Rusak Berat"
+                            android:textColor="#222222"
+                            android:textSize="14sp"
+                            android:buttonTint="#F44336" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🔴"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                </RadioGroup>
+
+                <!-- ProgressBar -->
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone" />
+
+                <!-- Tombol Simpan -->
                 <Button
                     android:id="@+id/simpanBtn"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#41E2D2"
-                    android:text="Simpan"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
-
-                <Button
-                    android:id="@+id/batalBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#0D1528"
-                    android:text="Batal"
+                    android:layout_height="52dp"
+                    android:background="@drawable/gradient_card"
+                    android:text="SIMPAN ALAT"
                     android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="4dp" />
 
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        </androidx.cardview.widget.CardView>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
 
     </LinearLayout>
 </ScrollView>
