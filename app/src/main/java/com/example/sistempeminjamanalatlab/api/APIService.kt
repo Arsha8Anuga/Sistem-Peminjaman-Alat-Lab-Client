@@ -1,5 +1,7 @@
 package com.example.sistempeminjamanalatlab.api
 
+import com.example.sistempeminjamanalatlab.models.entity.Alat
+import com.example.sistempeminjamanalatlab.models.entity.KategoriAlat
 import com.example.sistempeminjamanalatlab.models.request.*
 import com.example.sistempeminjamanalatlab.models.response.*
 import okhttp3.MultipartBody
@@ -10,26 +12,40 @@ interface APIService {
 
     // ─── AUTH ─────────────────────────────────────────────────
     @POST("auth/login")
-    fun loginUser(@Body request: LoginRequest): Call<LoginResponse>
+    fun loginUser(@Body request: LoginRequest): Call<ActualLoginResponse>
 
     // ─── ALAT ──────────────────────────────────────────────────
     @GET("alat/")
-    fun getAllAlat(@Header("Authorization") token: String): Call<AlatListResponse>
+    fun getAllAlat(@Header("Authorization") token: String): Call<List<Alat>>
 
     @POST("alat/")
     fun createAlat(
         @Header("Authorization") token: String,
-        @Body request: AlatCreateRequest // Diganti ke CreateRequest
+        @Query("nama_alat") namaAlat: String,
+        @Query("kode_alat") kodeAlat: String,
+        @Query("kategori_id") kategoriId: Long,
+        @Query("stok_total") stokTotal: Int,
+        @Query("stok_tersedia") stokTersedia: Int, // Wajib ada karena divalidasi Python
+        @Query("kondisi_fisik") kondisiFisik: String,
+        @Query("status_ketersediaan") statusKetersediaan: String, // Wajib ada karena divalidasi Python
+        @Query("lokasi_penyimpanan") lokasiPenyimpanan: String?  // Wajib ada karena divalidasi Python
     ): Call<AlatResponse>
 
     @GET("alat/{alat_id}")
     fun getAlatById(@Header("Authorization") token: String, @Path("alat_id") id: Long): Call<AlatResponse>
 
-    @PUT("alat/{alat_id}")
+    @PUT("alat/{id}") // sesuaikan dengan endpoint routing di FastAPI kamu
     fun updateAlat(
         @Header("Authorization") token: String,
-        @Path("alat_id") id: Long,
-        @Body request: AlatUpdateRequest // Diganti ke UpdateRequest
+        @Path("id") id: Long,
+        @Query("nama_alat") namaAlat: String,
+        @Query("kode_alat") kodeAlat: String,
+        @Query("kategori_id") kategoriId: Long,
+        @Query("stok_total") stokTotal: Int,
+        @Query("stok_tersedia") stokTersedia: Int,
+        @Query("kondisi_fisik") kondisiFisik: String,
+        @Query("status_ketersediaan") statusKetersediaan: String,
+        @Query("lokasi_penyimpanan") lokasiPenyimpanan: String?
     ): Call<AlatResponse>
 
     @DELETE("alat/{alat_id}")
@@ -37,7 +53,7 @@ interface APIService {
 
     // ─── KATEGORI ──────────────────────────────────────────────
     @GET("kategori/")
-    fun getAllKategori(@Header("Authorization") token: String): Call<KategoriListResponse>
+    fun getAllKategori(@Header("Authorization") token: String): Call<List<KategoriAlat>>
 
     @POST("kategori/")
     fun createKategori(@Header("Authorization") token: String, @Body request: KategoriRequest): Call<KategoriResponse>

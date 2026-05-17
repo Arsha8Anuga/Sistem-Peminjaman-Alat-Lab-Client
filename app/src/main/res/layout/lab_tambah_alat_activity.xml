@@ -280,7 +280,6 @@
                     android:id="@+id/spinnerKategori"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:background="@drawable/bg_input_field"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
                     android:layout_marginBottom="20dp" />
@@ -322,89 +321,47 @@
                     android:orientation="vertical"
                     android:layout_marginBottom="24dp">
 
-                    <!-- Baik -->
-                    <LinearLayout
+                    <RadioButton
+                        android:id="@+id/radiobuttonbaik"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:background="@drawable/bg_input_field"
+                        android:layout_height="48dp"
                         android:layout_marginBottom="10dp"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp">
-
-                        <RadioButton
-                            android:id="@+id/radiobuttonbaik"
-                            android:layout_width="0dp"
-                            android:layout_height="48dp"
-                            android:layout_weight="1"
-                            android:text="Baik"
-                            android:textColor="#222222"
-                            android:textSize="14sp"
-                            android:buttonTint="#00BCD4"
-                            android:checked="true" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🟢"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-
-                    <!-- Rusak Ringan -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
                         android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:text="Baik"
+                        android:textColor="#222222"
+                        android:textSize="14sp"
+                        android:buttonTint="#00BCD4"
+                        android:textAlignment="viewStart"
+                        android:checked="true" />
+
+                    <RadioButton
+                        android:id="@+id/radiobuttonrusakringan"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
                         android:layout_marginBottom="10dp"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp">
-
-                        <RadioButton
-                            android:id="@+id/radiobuttonrusakringan"
-                            android:layout_width="0dp"
-                            android:layout_height="48dp"
-                            android:layout_weight="1"
-                            android:text="Rusak Ringan"
-                            android:textColor="#222222"
-                            android:textSize="14sp"
-                            android:buttonTint="#FF9800" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🟡"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-
-                    <!-- Rusak Berat -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
                         android:background="@drawable/bg_input_field"
                         android:paddingStart="14dp"
-                        android:paddingEnd="14dp">
+                        android:paddingEnd="14dp"
+                        android:text="Rusak Ringan"
+                        android:textColor="#222222"
+                        android:textSize="14sp"
+                        android:buttonTint="#FF9800"
+                        android:textAlignment="viewStart" />
 
-                        <RadioButton
-                            android:id="@+id/radiobuttonrusakberat"
-                            android:layout_width="0dp"
-                            android:layout_height="48dp"
-                            android:layout_weight="1"
-                            android:text="Rusak Berat"
-                            android:textColor="#222222"
-                            android:textSize="14sp"
-                            android:buttonTint="#F44336" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🔴"
-                            android:textSize="16sp" />
-                    </LinearLayout>
+                    <RadioButton
+                        android:id="@+id/radiobuttonrusakberat"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_input_field"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:text="Rusak Berat"
+                        android:textColor="#222222"
+                        android:textSize="14sp"
+                        android:buttonTint="#F44336"
+                        android:textAlignment="viewStart" />
 
                 </RadioGroup>
 

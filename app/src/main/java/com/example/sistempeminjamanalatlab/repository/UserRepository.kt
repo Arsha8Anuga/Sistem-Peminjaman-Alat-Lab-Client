@@ -11,7 +11,7 @@ class UserRepository(private val apiService: APIService) {
 
     // Update Foto Profil -> Tetap dipertahankan karena sudah sesuai dengan @POST("upload/user/{user_id}")
     fun uploadProfilePhoto(token: String, id: Long, photo: MultipartBody.Part, onResult: (Boolean, String?) -> Unit) {
-        apiService.uploadUserPhoto("Bearer $token", id, photo).enqueue(object : Callback<BaseResponse> {
+        apiService.uploadUserPhoto(token, id, photo).enqueue(object : Callback<BaseResponse> {
             override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
             }

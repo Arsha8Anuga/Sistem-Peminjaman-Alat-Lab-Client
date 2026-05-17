@@ -7,10 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object APIClient {
-    // 1. Sesuaikan URL dengan server Python kamu
-    // Gunakan 10.0.2.2 jika running di emulator Android Studio
-    // Gunakan IP WiFi laptop jika running di HP fisik (misal: 192.168.1.5)
-    private const val BASE_URL = "http://10.0.2.2:5000/api/v1/"
+    private const val BASE_URL = "https://c6c8-114-10-45-245.ngrok-free.app/"
 
     // 2. Logging Interceptor agar kamu bisa melihat request & response di Logcat
     private val logger = HttpLoggingInterceptor().apply {

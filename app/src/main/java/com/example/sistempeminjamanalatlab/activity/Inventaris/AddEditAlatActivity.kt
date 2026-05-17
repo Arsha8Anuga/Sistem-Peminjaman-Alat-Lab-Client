@@ -125,14 +125,13 @@ class AddEditAlatActivity : AppCompatActivity() {
         }
 
         viewModel.listKategori.observe(this) { list ->
-            if (list != null) {
+            if (!list.isNullOrEmpty()) {
                 kategoriList = list
-                val namaKategoriList = list.map { it.namaKategori ?: "Tanpa Nama" }
-                val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, namaKategoriList)
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+                // 🟢 Langsung masukkan 'list' objek KategoriAlat-nya, tidak perlu di-map lagi!
+                val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, kategoriList)
                 spinnerKategori.adapter = adapter
 
-                // ─── PERBAIKAN 4: Set posisi spinner pakai variabel local currentKategoriId agar lebih presisi ───
                 if (isEditMode && currentKategoriId != null) {
                     val index = list.indexOfFirst { it.id == currentKategoriId }
                     if (index >= 0) spinnerKategori.setSelection(index)

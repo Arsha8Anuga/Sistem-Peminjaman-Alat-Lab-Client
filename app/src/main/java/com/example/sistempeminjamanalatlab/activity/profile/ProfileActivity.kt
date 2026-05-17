@@ -1,4 +1,4 @@
-/*package com.example.sistempeminjamanalatlab.activity.profile
+package com.example.sistempeminjamanalatlab.activity.profile
 
 import android.app.Activity
 import android.content.Intent
@@ -26,7 +26,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
-class ProfileActivity : AppCompatActivity() {
+/*class ProfileActivity : AppCompatActivity() {
 
     private lateinit var imgProfile: ImageView
     private lateinit var tvName: TextView

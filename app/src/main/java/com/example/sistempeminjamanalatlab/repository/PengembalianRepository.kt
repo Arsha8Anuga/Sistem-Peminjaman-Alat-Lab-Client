@@ -17,7 +17,7 @@ class PengembalianRepository(private val apiService: APIService) {
      * Mengambil detail data pengembalian.
      */
     fun getDetailPengembalian(token: String, peminjamanId: Long, onResult: (Pengembalian?, String?) -> Unit) {
-        apiService.getDetailPengembalian("Bearer $token", peminjamanId).enqueue(object : Callback<PengembalianResponse> {
+        apiService.getDetailPengembalian(token, peminjamanId).enqueue(object : Callback<PengembalianResponse> {
             override fun onResponse(call: Call<PengembalianResponse>, response: Response<PengembalianResponse>) {
                 if (response.isSuccessful) {
                     onResult(response.body()?.data, response.body()?.message)
@@ -37,7 +37,7 @@ class PengembalianRepository(private val apiService: APIService) {
      * Mahasiswa membuat pengajuan pengembalian.
      */
     fun submitPengembalian(token: String, request: PengembalianRequest, onResult: (Boolean, String?) -> Unit) {
-        apiService.createPengembalian("Bearer $token", request).enqueue(object : Callback<PengembalianResponse> {
+        apiService.createPengembalian(token, request).enqueue(object : Callback<PengembalianResponse> {
             override fun onResponse(call: Call<PengembalianResponse>, response: Response<PengembalianResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
             }
@@ -56,7 +56,7 @@ class PengembalianRepository(private val apiService: APIService) {
      */
     fun verifyPengembalian(token: String, peminjamanId: Long, request: VerifyPengembalianRequest, onResult: (Boolean, String?) -> Unit) {
         // Asumsi: APIService.verifyPengembalian sudah ditambahkan parameter @Body request: VerifyPengembalianRequest
-        apiService.verifyPengembalian("Bearer $token", peminjamanId, request).enqueue(object : Callback<BaseResponse> {
+        apiService.verifyPengembalian(token, peminjamanId, request).enqueue(object : Callback<BaseResponse> {
             override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
             }

@@ -14,7 +14,7 @@ class PeminjamanRepository(private val apiService: APIService) {
 
     // Submit Pengajuan Baru
     fun submitPeminjaman(token: String, request: PeminjamanRequest, onResult: (Boolean, String?) -> Unit) {
-        apiService.createPeminjaman("Bearer $token", request).enqueue(object : Callback<PeminjamanResponse> {
+        apiService.createPeminjaman(token, request).enqueue(object : Callback<PeminjamanResponse> {
             override fun onResponse(call: Call<PeminjamanResponse>, response: Response<PeminjamanResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
             }
@@ -26,7 +26,7 @@ class PeminjamanRepository(private val apiService: APIService) {
 
     // Ambil Riwayat Milik Sendiri (Mahasiswa)
     fun getMyLoanHistory(token: String, onResult: (List<Peminjaman>?, String?) -> Unit) {
-        apiService.getListPeminjaman("Bearer $token").enqueue(object : Callback<PeminjamanListResponse> {
+        apiService.getListPeminjaman(token).enqueue(object : Callback<PeminjamanListResponse> {
             override fun onResponse(call: Call<PeminjamanListResponse>, response: Response<PeminjamanListResponse>) {
                 onResult(response.body()?.data, response.body()?.message)
             }
@@ -38,7 +38,7 @@ class PeminjamanRepository(private val apiService: APIService) {
 
     // Ambil Detail Peminjaman (Untuk melihat item alat di dalamnya)
     fun getLoanDetail(token: String, loanId: Long, onResult: (Peminjaman?, String?) -> Unit) {
-        apiService.getDetailPeminjaman("Bearer $token", loanId).enqueue(object : Callback<PeminjamanResponse> {
+        apiService.getDetailPeminjaman(token, loanId).enqueue(object : Callback<PeminjamanResponse> {
             override fun onResponse(call: Call<PeminjamanResponse>, response: Response<PeminjamanResponse>) {
                 onResult(response.body()?.data, response.body()?.message)
             }
@@ -49,7 +49,7 @@ class PeminjamanRepository(private val apiService: APIService) {
     }
 
     fun cancelPeminjaman(token: String, loanId: Long, onResult: (Boolean, String?) -> Unit) {
-        apiService.cancelPeminjaman("Bearer $token", loanId).enqueue(object : Callback<BaseResponse> {
+        apiService.cancelPeminjaman(token, loanId).enqueue(object : Callback<BaseResponse> {
             override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
                 onResult(response.isSuccessful, response.body()?.message ?: "Peminjaman berhasil dibatalkan")
             }
@@ -64,7 +64,7 @@ class PeminjamanRepository(private val apiService: APIService) {
 
     // Aksi: Approve
     fun approveLoan(token: String, loanId: Long, onResult: (Boolean, String?) -> Unit) {
-        apiService.approvePeminjaman("Bearer $token", loanId).enqueue(object : Callback<BaseResponse> {
+        apiService.approvePeminjaman(token, loanId).enqueue(object : Callback<BaseResponse> {
             override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
             }
@@ -74,7 +74,7 @@ class PeminjamanRepository(private val apiService: APIService) {
 
     // Aksi: Reject
     fun rejectLoan(token: String, loanId: Long, onResult: (Boolean, String?) -> Unit) {
-        apiService.rejectPeminjaman("Bearer $token", loanId).enqueue(object : Callback<BaseResponse> {
+        apiService.rejectPeminjaman(token, loanId).enqueue(object : Callback<BaseResponse> {
             override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
             }
@@ -84,7 +84,7 @@ class PeminjamanRepository(private val apiService: APIService) {
 
     // Aksi: Ambil Alat (Update status saat barang fisik diserahkan ke mhs)
     fun ambilAlat(token: String, loanId: Long, onResult: (Boolean, String?) -> Unit) {
-        apiService.ambilAlat("Bearer $token", loanId).enqueue(object : Callback<BaseResponse> {
+        apiService.ambilAlat(token, loanId).enqueue(object : Callback<BaseResponse> {
             override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
                 onResult(response.isSuccessful, response.body()?.message)
             }

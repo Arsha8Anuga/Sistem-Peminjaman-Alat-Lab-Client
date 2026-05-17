@@ -21,8 +21,15 @@ data class LoginData(
     @SerializedName("nim_nip") val nimNip: String?
 )
 
+data class ActualLoginResponse(
+    @SerializedName("access_token")
+    val accessToken: String,
+
+    @SerializedName("token_type")
+    val tokenType: String
+)
+
 // --- AUTH & USER ---
-typealias LoginResponse     = WrappedResponse<LoginData>
 typealias UserResponse      = WrappedResponse<User>
 typealias UserListResponse  = WrappedResponse<List<User>>
 

@@ -26,6 +26,11 @@
         </activity>
 
         <activity
+            android:name=".activity.auth.SplashActivity"
+            android:exported="false"
+            />
+
+        <activity
             android:name=".activity.dashboard.MainActivity"
             android:exported="false"/>
 
@@ -49,6 +54,21 @@
             android:name=".inventaris.AddEditAlatActivity"
             android:exported="false"
              />
+
+        <activity
+            android:name=".inventaris.AlatDetailActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".peminjaman.DetailPinjamActivity"
+            android:exported="false"
+            />
+
+        <activity
+            android:name=".peminjaman.FormPinjamActivity"
+            android:exported="false"
+            />
     </application>
 
 </manifest>
