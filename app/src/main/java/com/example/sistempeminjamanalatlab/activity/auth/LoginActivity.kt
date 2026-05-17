@@ -66,14 +66,14 @@ class LoginActivity : AppCompatActivity() {
         // Pindahkan proses penyimpanan sesi ke sini saat loginData terisi sukses
         viewModel.loginData.observe(this) { data ->
             if (data != null) {
+                // 1. Amankan data sesi masuk ke database lokal/sharedpreferences dulu
                 SessionManager.saveLoginSession(this, data)
-            }
-        }
 
-        viewModel.loginSuccess.observe(this) { success ->
-            if (success) {
+                // 2. Setelah data dijamin tersimpan, baru lakukan navigasi berdasarkan role
                 navigateToDashboard()
-                viewModel.resetLoginState() // Reset state sukses agar tidak memicu navigasi berulang
+
+                // 3. Reset state login di ViewModel agar tidak trigger berulang
+                viewModel.resetLoginState()
             }
         }
     }

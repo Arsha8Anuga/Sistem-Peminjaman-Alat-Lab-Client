@@ -35,7 +35,7 @@ class AlatDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail_pinjam)
+        setContentView(R.layout.mhs_detail_alat_activity)
 
         initViews()
         setupViewModel()

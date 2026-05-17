@@ -1,4 +1,4 @@
-package com.example.sistempeminjamanalatlab.activity.pengembalian
+package com.example.sistempeminjamanalatlab.activity.Pengembalian
 
 import android.os.Bundle
 import android.view.View
@@ -10,22 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sistempeminjamanalatlab.Adapter.FormKembaliAdapter
 import com.example.sistempeminjamanalatlab.R
-import com.example.sistempeminjamanalatlab.models.*
+import com.example.sistempeminjamanalatlab.adapter.FormKembaliAdapter
 import com.example.sistempeminjamanalatlab.network.APIClient
 import com.example.sistempeminjamanalatlab.api.APIService
 import com.example.sistempeminjamanalatlab.models.entity.DetailPeminjaman
 import com.example.sistempeminjamanalatlab.models.request.DetailKembaliRequest
 import com.example.sistempeminjamanalatlab.models.request.PengembalianRequest
-import com.example.sistempeminjamanalatlab.models.response.PeminjamanResponse
-import com.example.sistempeminjamanalatlab.repository.PengembalianRepository // Sesuaikan nama repo pengembalianmu
+import com.example.sistempeminjamanalatlab.repository.PengembalianRepository
+import com.example.sistempeminjamanalatlab.repository.PeminjamanRepository // Tambahkan import ini
 import com.example.sistempeminjamanalatlab.utils.SessionManager
 import com.example.sistempeminjamanalatlab.viewmodel.PengembalianViewModel
+import com.example.sistempeminjamanalatlab.viewmodel.PeminjamanViewModel
 import com.example.sistempeminjamanalatlab.viewmodel.ViewModelFactory
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class LaporKembaliActivity : AppCompatActivity() {
 
@@ -33,13 +30,12 @@ class LaporKembaliActivity : AppCompatActivity() {
     private lateinit var tvTanggalPinjam: TextView
     private lateinit var rvAlatKembali: RecyclerView
     private lateinit var btnSubmitKembali: Button
-    private lateinit var progressBar: ProgressBar // TAMBAHAN: Pantau loading via ViewModel
-
-    private lateinit var apiService: APIService
+    private lateinit var progressBar: ProgressBar
     private lateinit var formKembaliAdapter: FormKembaliAdapter
 
-    // ─── TAMBAHAN: Hubungkan ke ViewModel agar fungsi mengambang terpakai ───
-    private lateinit var viewModel: PengembalianViewModel
+    // ✅ DEKLARASI DUA VIEWMODEL
+    private lateinit var pengembalianViewModel: PengembalianViewModel
+    private lateinit var peminjamanViewModel: PeminjamanViewModel
 
     private var token: String = ""
     private var peminjamanId: Long = -1L
@@ -51,7 +47,6 @@ class LaporKembaliActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.mhs_form_kembali_activity)
 
-        // AMAN: token di sini SUDAH mengandung kata "Bearer " dari SessionManager
         token = SessionManager.getBearerToken(this) ?: ""
         peminjamanId = intent.getLongExtra("PEMINJAMAN_ID", -1L)
 
@@ -61,13 +56,13 @@ class LaporKembaliActivity : AppCompatActivity() {
             return
         }
 
-        apiService = APIClient.buildService(APIService::class.java)
-
         initView()
-        setupViewModel() // TAMBAHAN: Setup komponen MVVM
-        observeViewModel() // TAMBAHAN: Amati status dari ViewModel
+        setupViewModel()
+        observeViewModel()
         setupRecyclerView()
-        getDetailPeminjaman()
+
+        // ✅ Panggil fungsi fetchDetail milik PeminjamanViewModel
+        peminjamanViewModel.fetchDetail(token, peminjamanId)
 
         btnSubmitKembali.setOnClickListener {
             submitPengembalian()
@@ -79,33 +74,58 @@ class LaporKembaliActivity : AppCompatActivity() {
         tvTanggalPinjam = findViewById(R.id.tv_tanggal_pinjam)
         rvAlatKembali = findViewById(R.id.rv_alat_kembali)
         btnSubmitKembali = findViewById(R.id.btn_submit_kembali)
-        progressBar = findViewById(R.id.progressBar) // Pastikan ID ini ada di XML mhs_form_kembali_activity
+        progressBar = findViewById(R.id.progressBar)
     }
 
     private fun setupViewModel() {
-        val repo = PengembalianRepository(apiService) // Sesuaikan dengan constructor repo pengembalianmu
-        val factory = ViewModelFactory.getInstance(repo)
-        viewModel = ViewModelProvider(this, factory).get(PengembalianViewModel::class.java)
+        val apiService = APIClient.buildService(APIService::class.java)
+
+        // ✅ Merakit ViewModel 1: Peminjaman
+        val peminjamanRepo = PeminjamanRepository(apiService)
+        val peminjamanFactory = ViewModelFactory.getInstance(peminjamanRepo)
+        peminjamanViewModel = ViewModelProvider(this, peminjamanFactory).get(PeminjamanViewModel::class.java)
+
+        // ✅ Merakit ViewModel 2: Pengembalian
+        val pengembalianRepo = PengembalianRepository(apiService)
+        val pengembalianFactory = ViewModelFactory.getInstance(pengembalianRepo)
+        pengembalianViewModel = ViewModelProvider(this, pengembalianFactory).get(PengembalianViewModel::class.java)
     }
 
     private fun observeViewModel() {
-        viewModel.isLoading.observe(this) { show ->
+        // Pantau loading dari pengembalian saat submit data
+        pengembalianViewModel.isLoading.observe(this) { show ->
             progressBar.visibility = if (show) View.VISIBLE else View.GONE
             btnSubmitKembali.isEnabled = !show
         }
 
-        viewModel.message.observe(this) { msg ->
+        pengembalianViewModel.message.observe(this) { msg ->
             if (msg != null) Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         }
 
-        // ─── SINKRONISASI: Menangkap sinyal sukses dari fungsi submitReturn() ViewModel ───
-        viewModel.actionSuccess.observe(this) { success ->
+        // ✅ Amati data detail transaksi yang datang dari PeminjamanViewModel
+        peminjamanViewModel.detailPeminjaman.observe(this) { peminjaman ->
+            peminjaman?.let {
+                tvKodePeminjaman.text = "Kode: ${it.kodePeminjaman}"
+                tvTanggalPinjam.text = "Dipinjam pada: ${it.tanggalPinjam ?: "-"}"
+
+                detailList.clear()
+                detailList.addAll(it.details)
+
+                it.details.forEach { detail ->
+                    hasilKembaliMap[detail.id] = DetailKembaliRequest(
+                        detailId = detail.id,
+                        kondisiAkhir = detail.kondisiAkhir ?: "Baik",
+                        catatan = detail.catatanPengembalian
+                    )
+                }
+                formKembaliAdapter.notifyDataSetChanged()
+            }
+        }
+
+        // Pantau sinyal sukses submit dari PengembalianViewModel
+        pengembalianViewModel.actionSuccess.observe(this) { success ->
             if (success) {
                 Toast.makeText(this, "Pengembalian berhasil diajukan", Toast.LENGTH_SHORT).show()
-
-                // Panggil reset state jika ada fungsi resetActionState() di PengembalianViewModel
-                // viewModel.resetActionState() 
-
                 finish()
             }
         }
@@ -121,38 +141,6 @@ class LaporKembaliActivity : AppCompatActivity() {
         }
         rvAlatKembali.layoutManager = LinearLayoutManager(this)
         rvAlatKembali.adapter = formKembaliAdapter
-    }
-
-    private fun getDetailPeminjaman() {
-        // PERBAIKAN: Gunakan variabel 'token' langsung karena sudah ber-Bearer dari SessionManager
-        apiService.getDetailPeminjaman(token, peminjamanId).enqueue(object : Callback<PeminjamanResponse> {
-            override fun onResponse(call: Call<PeminjamanResponse>, response: Response<PeminjamanResponse>) {
-                if (response.isSuccessful && response.body()?.success == true) {
-                    val peminjaman = response.body()?.data ?: return
-
-                    tvKodePeminjaman.text = "Kode: ${peminjaman.kodePeminjaman}"
-                    tvTanggalPinjam.text = "Dipinjam pada: ${peminjaman.tanggalPinjam ?: "-"}"
-
-                    detailList.clear()
-                    detailList.addAll(peminjaman.details)
-
-                    peminjaman.details.forEach { detail ->
-                        hasilKembaliMap[detail.id] = DetailKembaliRequest(
-                            detailId = detail.id,
-                            kondisiAkhir = detail.kondisiAkhir ?: "Baik",
-                            catatan = detail.catatanPengembalian
-                        )
-                    }
-                    formKembaliAdapter.notifyDataSetChanged()
-                } else {
-                    Toast.makeText(this@LaporKembaliActivity, "Gagal mengambil detail peminjaman", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<PeminjamanResponse>, t: Throwable) {
-                Toast.makeText(this@LaporKembaliActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
     }
 
     private fun submitPengembalian() {
@@ -175,7 +163,7 @@ class LaporKembaliActivity : AppCompatActivity() {
             itemsKembali = itemsKembali
         )
 
-        // ─── DIUBAH: Panggil fungsi submitReturn milik PengembalianViewModel ───
-        viewModel.submitReturn(token, request)
+        // ✅ Kirim data menggunakan PengembalianViewModel
+        pengembalianViewModel.submitReturn(token, request)
     }
 }

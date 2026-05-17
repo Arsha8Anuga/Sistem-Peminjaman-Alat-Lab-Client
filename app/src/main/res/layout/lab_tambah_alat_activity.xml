@@ -188,6 +188,43 @@
                     android:textColor="#222222"
                     android:textSize="14sp" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Foto Alat"
+                    android:textColor="#555555"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <Button
+                    android:id="@+id/btnPilihFoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:backgroundTint="#00BCD4"
+                    android:text="📸 Pilih Foto dari Galeri"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginBottom="20dp"
+                    app:cardCornerRadius="12dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#E0E0E0">
+
+                    <ImageView
+                        android:id="@+id/imgPreviewAlat"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@android:drawable/ic_menu_report_image"
+                        android:contentDescription="Pratinjau Foto Alat" />
+                </com.google.android.material.card.MaterialCardView>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"

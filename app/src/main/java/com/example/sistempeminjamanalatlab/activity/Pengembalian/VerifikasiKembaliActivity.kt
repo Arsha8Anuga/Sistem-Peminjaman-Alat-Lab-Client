@@ -19,8 +19,11 @@ import com.example.sistempeminjamanalatlab.network.APIClient
 import com.example.sistempeminjamanalatlab.api.APIService
 import com.example.sistempeminjamanalatlab.models.entity.DetailPeminjaman
 import com.example.sistempeminjamanalatlab.models.request.VerifyPengembalianRequest
+import com.example.sistempeminjamanalatlab.repository.PengembalianRepository
+import com.example.sistempeminjamanalatlab.repository.PeminjamanRepository
 import com.example.sistempeminjamanalatlab.utils.SessionManager
 import com.example.sistempeminjamanalatlab.viewmodel.PengembalianViewModel
+import com.example.sistempeminjamanalatlab.viewmodel.PeminjamanViewModel
 import com.example.sistempeminjamanalatlab.viewmodel.ViewModelFactory
 
 class VerifikasiKembaliActivity : AppCompatActivity() {
@@ -33,9 +36,12 @@ class VerifikasiKembaliActivity : AppCompatActivity() {
     private lateinit var etDenda: EditText
     private lateinit var etCatatanVerifikasi: EditText
     private lateinit var btnVerifikasiKembali: Button
-    private lateinit var progressBar: ProgressBar // Ditambahkan untuk memantau loading state
+    private lateinit var progressBar: ProgressBar
 
-    private lateinit var viewModel: PengembalianViewModel
+    // ✅ REVISI 1: Deklarasikan kedua ViewModel secara terpisah
+    private lateinit var pengembalianViewModel: PengembalianViewModel
+    private lateinit var peminjamanViewModel: PeminjamanViewModel
+
     private lateinit var adapter: VerifikasiKembaliAdapter
 
     private var token: String = ""
@@ -63,8 +69,8 @@ class VerifikasiKembaliActivity : AppCompatActivity() {
         setupViewModel()
         observeViewModel()
 
-        // 🔴 DIUBAH: Ganti 'fetchDetailPengembalian' menjadi 'fetchDetail'
-        viewModel.fetchDetail(token, peminjamanId)
+        // ✅ REVISI 2: fetchDetail dipanggil dari peminjamanViewModel
+        peminjamanViewModel.fetchDetail(token, peminjamanId)
 
         btnVerifikasiKembali.setOnClickListener {
             submitVerifikasi()
@@ -74,13 +80,13 @@ class VerifikasiKembaliActivity : AppCompatActivity() {
     private fun initView() {
         tvKodePeminjaman = findViewById(R.id.tv_kode_peminjaman)
         tvNamaMahasiswa = findViewById(R.id.tv_nama_mahasiswa)
-        tvTanggalKembali = findViewById(R.id.tv_tanggal_kali) // Sesuaikan ID XML Anda
+        tvTanggalKembali = findViewById(R.id.tv_tanggal_kali)
         rvDetailKembali = findViewById(R.id.rv_detail_kembali)
         spinnerStatusVerifikasi = findViewById(R.id.spinner_status_verifikasi)
         etDenda = findViewById(R.id.et_denda)
         etCatatanVerifikasi = findViewById(R.id.et_catatan_verifikasi)
         btnVerifikasiKembali = findViewById(R.id.btn_verifikasi_kembali)
-        progressBar = findViewById(R.id.progressBar) // Pastikan ditambahkan ke XML
+        progressBar = findViewById(R.id.progressBar)
     }
 
     private fun setupSpinner() {
@@ -95,49 +101,48 @@ class VerifikasiKembaliActivity : AppCompatActivity() {
         rvDetailKembali.adapter = adapter
     }
 
-    // 3. Inisialisasi ViewModel via Factory Multi-Repository Helper
     private fun setupViewModel() {
         val apiService = APIClient.buildService(APIService::class.java)
-        val repo = com.example.sistempeminjamanalatlab.repository.PengembalianRepository(apiService)
-        val factory = ViewModelFactory.getInstance(repo)
-        viewModel = ViewModelProvider(this, factory).get(PengembalianViewModel::class.java)
+
+        // ✅ REVISI 3: Inisialisasi PeminjamanViewModel (Gunakan nama repo yang bersih)
+        val peminjamanRepo = PeminjamanRepository(apiService)
+        val peminjamanFactory = ViewModelFactory.getInstance(peminjamanRepo)
+        peminjamanViewModel = ViewModelProvider(this, peminjamanFactory).get(PeminjamanViewModel::class.java)
+
+        // ✅ REVISI 4: Inisialisasi PengembalianViewModel
+        val pengembalianRepo = PengembalianRepository(apiService)
+        val pengembalianFactory = ViewModelFactory.getInstance(pengembalianRepo)
+        pengembalianViewModel = ViewModelProvider(this, pengembalianFactory).get(PengembalianViewModel::class.java)
     }
 
-    // 4. Amati State Perubahan Data Terpusat Melalui LiveData
     private fun observeViewModel() {
-        viewModel.isLoading.observe(this) { isLoading ->
+        // Pantau loading state dari pengembalian saat menekan tombol verifikasi
+        pengembalianViewModel.isLoading.observe(this) { isLoading ->
             progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             btnVerifikasiKembali.isEnabled = !isLoading
         }
 
-        viewModel.message.observe(this) { msg ->
+        pengembalianViewModel.message.observe(this) { msg ->
             if (msg != null) Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         }
 
-        // Pantau data respons detail pengembalian
-        viewModel.detailPengembalian.observe(this) { pengembalian ->
-            pengembalian?.let {
-                val peminjaman = it.peminjaman
+        // ✅ REVISI 5: Amati perubahan data detail dari peminjamanViewModel (bukan pengembalian)
+        peminjamanViewModel.detailPeminjaman.observe(this) { peminjaman ->
+            peminjaman?.let {
+                tvKodePeminjaman.text = "Kode: ${it.kodePeminjaman}"
+                tvNamaMahasiswa.text = "Mahasiswa: ${it.mahasiswa?.nama ?: "-"}"
 
-                tvKodePeminjaman.text = "Kode: ${peminjaman?.kodePeminjaman ?: "-"}"
-                tvNamaMahasiswa.text = "Mahasiswa: ${peminjaman?.mahasiswa?.nama ?: "-"}"
-                tvTanggalKembali.text = "Tanggal kembali: ${it.tanggalDikembalikan ?: "-"}"
-                etDenda.setText(it.denda.toString())
-                etCatatanVerifikasi.setText(it.catatan ?: "")
-
-                val statusIndex = statusList.indexOf(it.statusVerifikasi)
-                if (statusIndex >= 0) {
-                    spinnerStatusVerifikasi.setSelection(statusIndex)
-                }
+                // Jika backend kamu punya field tanggal dikembalikan di objek peminjaman/pengembalian silakan disesuaikan
+                tvTanggalKembali.text = "Tanggal Pinjam: ${it.tanggalPinjam ?: "-"}"
 
                 detailList.clear()
-                detailList.addAll(peminjaman?.details ?: emptyList())
+                detailList.addAll(it.details)
                 adapter.notifyDataSetChanged()
             }
         }
 
-        // Jika verifikasi dari laboran sukses, tutup halaman
-        viewModel.actionSuccess.observe(this) { success ->
+        // Jika proses eksekusi verifikasi dari laboran sukses, tutup halaman
+        pengembalianViewModel.actionSuccess.observe(this) { success ->
             if (success) {
                 Toast.makeText(this, "Pengembalian berhasil diverifikasi", Toast.LENGTH_SHORT).show()
                 finish()
@@ -156,7 +161,7 @@ class VerifikasiKembaliActivity : AppCompatActivity() {
             catatan = catatan
         )
 
-        // 🔴 DIUBAH: Ganti 'verifyPengembalian' menjadi 'verifyReturn'
-        viewModel.verifyReturn(token, peminjamanId, request)
+        // ✅ Tetap gunakan pengembalianViewModel untuk mengirim hasil verifikasi
+        pengembalianViewModel.verifyReturn(token, peminjamanId, request)
     }
 }

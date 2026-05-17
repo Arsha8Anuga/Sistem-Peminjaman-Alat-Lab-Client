@@ -3,9 +3,12 @@ package com.example.sistempeminjamanalatlab.inventaris
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.sistempeminjamanalatlab.R
 import com.example.sistempeminjamanalatlab.models.*
 import com.example.sistempeminjamanalatlab.network.APIClient
@@ -36,6 +39,8 @@ class AddEditAlatActivity : AppCompatActivity() {
     private lateinit var rbBaik: RadioButton
     private lateinit var rbRusakRingan: RadioButton
     private lateinit var rbRusakBerat: RadioButton
+    private lateinit var imgPreviewAlat: ImageView
+    private lateinit var btnPilihFoto: Button
     private lateinit var btnSimpan: Button
     private lateinit var progressBar: ProgressBar
 
@@ -43,8 +48,14 @@ class AddEditAlatActivity : AppCompatActivity() {
     private var isEditMode = false
     private var currentAlatId: Long? = null
     private var currentKategoriId: Long? = null // Menyimpan ID kategori alat yang sedang diedit
-
+    private var selectedImagePath: String? = null
     private var kategoriList: List<KategoriAlat> = emptyList()
+    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+            imgPreviewAlat.setImageURI(uri) // Tampilkan pratinjau foto ke layar
+            selectedImagePath = uri.toString() // Ambil alamat path internalnya
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +79,10 @@ class AddEditAlatActivity : AppCompatActivity() {
             fillForm(alatData)
         }
 
+        btnPilihFoto.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+
         btnSimpan.setOnClickListener { saveAlat() }
     }
 
@@ -86,6 +101,8 @@ class AddEditAlatActivity : AppCompatActivity() {
         rbBaik = findViewById(R.id.radiobuttonbaik)
         rbRusakRingan = findViewById(R.id.radiobuttonrusakringan)
         rbRusakBerat = findViewById(R.id.radiobuttonrusakberat)
+        imgPreviewAlat = findViewById(R.id.imgPreviewAlat)
+        btnPilihFoto = findViewById(R.id.btnPilihFoto)
         btnSimpan = findViewById(R.id.simpanBtn)
         progressBar = findViewById(R.id.progressBar)
     }
@@ -195,6 +212,15 @@ class AddEditAlatActivity : AppCompatActivity() {
             "Rusak Ringan" -> rbRusakRingan.isChecked = true
             "Rusak Berat" -> rbRusakBerat.isChecked = true
         }
+
+        if (!alat.foto.isNullOrEmpty()) {
+            selectedImagePath = alat.foto // simpan path lama sebagai fallback
+            Glide.with(this)
+                .load(alat.foto)
+                .placeholder(android.R.drawable.ic_menu_report_image)
+                .error(android.R.drawable.ic_menu_report_image)
+                .into(imgPreviewAlat)
+        }
     }
 
     private fun saveAlat() {
@@ -206,7 +232,6 @@ class AddEditAlatActivity : AppCompatActivity() {
         }
 
         val selectedKategori = kategoriList[spinnerKategori.selectedItemPosition]
-
         val kondisi = when {
             rbBaik.isChecked -> "Baik"
             rbRusakRingan.isChecked -> "Rusak Ringan"
@@ -214,6 +239,7 @@ class AddEditAlatActivity : AppCompatActivity() {
         }
 
         if (isEditMode && currentAlatId != null) {
+            // 🟢 PERBAIKAN: Hapus parameter 'foto' dari sini karena Multipart diproses terpisah di ViewModel/Repository
             val updateRequest = AlatUpdateRequest(
                 namaAlat = etNama.text.toString(),
                 kodeAlat = etKode.text.toString(),
@@ -225,8 +251,10 @@ class AddEditAlatActivity : AppCompatActivity() {
                 spesifikasi = null,
                 lokasiPenyimpanan = null
             )
+            // Jika ViewModel kamu menggunakan Multipart terpisah, biasanya selectedImagePath dikirim sebagai argumen tambahan di sini
             viewModel.updateAlat(token, currentAlatId!!, updateRequest)
         } else {
+            // 🟢 PERBAIKAN: Hapus parameter 'foto' dari sini
             val createRequest = AlatCreateRequest(
                 namaAlat = etNama.text.toString(),
                 kodeAlat = etKode.text.toString(),

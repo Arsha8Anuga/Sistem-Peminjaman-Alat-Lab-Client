@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sistempeminjamanalatlab.R
-import com.example.sistempeminjamanalatlab.adapter.PeminjamanAdapter
+import com.example.sistempeminjamanalatlab.adapter.RiwayatPinjamAdapter
 import com.example.sistempeminjamanalatlab.api.APIService
 import com.example.sistempeminjamanalatlab.network.APIClient
 import com.example.sistempeminjamanalatlab.repository.PeminjamanRepository
@@ -25,7 +25,7 @@ class RiwayatPinjamFragment : Fragment() {
     // Deklarasi View Klasik
     private lateinit var rvRiwayat: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var adapter: PeminjamanAdapter // Menggunakan PeminjamanAdapter yang sudah kita buat
+    private lateinit var adapter: RiwayatPinjamAdapter // Menggunakan PeminjamanAdapter yang sudah kita buat
     private lateinit var viewModel: PeminjamanViewModel
 
     override fun onCreateView(
@@ -62,7 +62,7 @@ class RiwayatPinjamFragment : Fragment() {
     private fun setupRecyclerView() {
         rvRiwayat.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = PeminjamanAdapter(arrayListOf()) { pinjam ->
+        adapter = RiwayatPinjamAdapter(arrayListOf()) { pinjam ->
             val intent = Intent(requireContext(), DetailPinjamActivity::class.java)
 
             // PERBAIKAN 1: Ubah dari "ID_PINJAM" menjadi "PEMINJAMAN_ID" agar sinkron dengan DetailPinjamActivity

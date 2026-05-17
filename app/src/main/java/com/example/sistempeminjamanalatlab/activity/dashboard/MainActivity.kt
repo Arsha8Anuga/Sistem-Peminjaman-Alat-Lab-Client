@@ -1,85 +1,48 @@
 package com.example.sistempeminjamanalatlab.activity.dashboard
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.sistempeminjamanalatlab.Adapter.AlatAdapter
 import com.example.sistempeminjamanalatlab.R
-import com.example.sistempeminjamanalatlab.api.APIService
-import com.example.sistempeminjamanalatlab.inventaris.AlatDetailActivity
-import com.example.sistempeminjamanalatlab.network.APIClient
-import com.example.sistempeminjamanalatlab.repository.AlatRepository
-import com.example.sistempeminjamanalatlab.utils.SessionManager
-import com.example.sistempeminjamanalatlab.viewmodel.AlatViewModel
-import com.example.sistempeminjamanalatlab.viewmodel.ViewModelFactory
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.fragment.app.Fragment
+import com.example.sistempeminjamanalatlab.inventaris.AlatListFragment
+import com.example.sistempeminjamanalatlab.peminjaman.RiwayatPinjamFragment
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var rvAlat: RecyclerView
-    private lateinit var progressBar: ProgressBar
-    private lateinit var adapter: AlatAdapter
-    private lateinit var viewModel: AlatViewModel
+    private lateinit var bottomNavigation: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Pastikan activity_main.xml kamu sudah berisi FrameLayout/FragmentContainerView & BottomNavigationView
         setContentView(R.layout.activity_main)
 
-        // 1. Inisialisasi UI klasik
-        rvAlat = findViewById(R.id.rvAlat)
-        progressBar = findViewById(R.id.progressBar)
+        bottomNavigation = findViewById(R.id.bottom_navigation)
 
-        setupRecyclerView()
-        setupViewModel()
-        observeViewModel()
-
-        // 2. Ambil data alat dari server
-        val token = SessionManager.getBearerToken(this) ?: ""
-        viewModel.fetchAllAlat(token)
-    }
-
-    private fun setupRecyclerView() {
-        adapter = AlatAdapter(arrayListOf()) { alat ->
-            // Aksi saat item diklik: Pindah ke Detail Alat
-            val intent = Intent(this, AlatDetailActivity::class.java)
-            intent.putExtra("ALAT_ID", alat.id)
-            startActivity(intent)
-        }
-        rvAlat.layoutManager = LinearLayoutManager(this)
-        rvAlat.adapter = adapter
-    }
-
-    private fun setupViewModel() {
-        val apiService = APIClient.buildService(APIService::class.java)
-        val repo = AlatRepository(apiService)
-
-        // Diubah menggunakan helper static .getInstance() sesuai update ViewModelFactory kita
-        val factory = ViewModelFactory.getInstance(repo)
-
-        viewModel = ViewModelProvider(this, factory).get(AlatViewModel::class.java)
-    }
-
-    private fun observeViewModel() {
-        // Pantau Loading
-        viewModel.isLoading.observe(this) { isLoading ->
-            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        // Tampilkan fragment pertama kali (Katalog Alat) saat aplikasi dibuka
+        if (savedInstanceState == null) {
+            loadFragment(AlatListFragment())
         }
 
-        // Pantau Data Alat
-        viewModel.listAlat.observe(this) { list ->
-            if (list != null) {
-                adapter.setData(list)
+        // Logika perpindahan fragment saat menu bawah diklik
+        bottomNavigation.setOnItemSelectedListener { item ->
+            var selectedFragment: Fragment? = null
+            when (item.itemId) {
+                R.id.menu_katalog -> selectedFragment = AlatListFragment()
+                R.id.menu_riwayat -> selectedFragment = RiwayatPinjamFragment()
+            }
+
+            if (selectedFragment != null) {
+                loadFragment(selectedFragment)
+                true
+            } else {
+                false
             }
         }
+    }
 
-        // Pantau Pesan Error
-        viewModel.message.observe(this) { msg ->
-            if (msg != null) Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-        }
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment) // R.id.fragment_container wajib ada di activity_main.xml
+            .commit()
     }
 }

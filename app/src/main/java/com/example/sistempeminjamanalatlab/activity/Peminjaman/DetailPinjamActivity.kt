@@ -1,5 +1,6 @@
 package com.example.sistempeminjamanalatlab.peminjaman
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -9,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.sistempeminjamanalatlab.R
+import com.example.sistempeminjamanalatlab.activity.Pengembalian.LaporKembaliActivity
 import com.example.sistempeminjamanalatlab.api.APIService
 import com.example.sistempeminjamanalatlab.network.APIClient
 import com.example.sistempeminjamanalatlab.repository.PeminjamanRepository
@@ -25,6 +27,7 @@ class DetailPinjamActivity : AppCompatActivity() {
     private lateinit var tvNamaPeminjam: TextView
     private lateinit var btnApprove: Button
     private lateinit var btnReject: Button
+    private lateinit var btnLaporKembali: Button
     private lateinit var btnAmbilAlat: Button
     private lateinit var progressBar: ProgressBar
 
@@ -33,7 +36,7 @@ class DetailPinjamActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.lab_approval_card_item)
+        setContentView(R.layout.activity_detail_pinjam)
 
         initViews()
         setupViewModel()
@@ -50,6 +53,12 @@ class DetailPinjamActivity : AppCompatActivity() {
         // PERBAIKAN 2: Alihkan listener ke fungsi yang tepat sesuai Role (Staff vs Mahasiswa)
         btnApprove.setOnClickListener { viewModel.approve(token, currentLoanId) }
         btnAmbilAlat.setOnClickListener { viewModel.markAsTaken(token, currentLoanId) }
+
+        btnLaporKembali.setOnClickListener {
+            val intent = Intent(this, LaporKembaliActivity::class.java)
+            intent.putExtra("PEMINJAMAN_ID", currentLoanId)
+            startActivity(intent)
+        }
 
         btnReject.setOnClickListener {
             if (SessionManager.isStaff(this)) {
@@ -68,6 +77,7 @@ class DetailPinjamActivity : AppCompatActivity() {
         btnApprove = findViewById(R.id.btnApprove) // Tambahkan ID ini di XML
         btnReject = findViewById(R.id.btnReject)   // Tambahkan ID ini di XML
         btnAmbilAlat = findViewById(R.id.btnAmbilAlat) // Tombol "Konfirmasi Pengambilan"
+        btnLaporKembali = findViewById(R.id.btnLaporKembali)
         progressBar = findViewById(R.id.progressBar)
     }
 
@@ -95,7 +105,7 @@ class DetailPinjamActivity : AppCompatActivity() {
                 tvKode.text = it.kodePeminjaman
                 tvStatus.text = it.status.uppercase()
                 tvTanggal.text = it.tanggalPinjam
-                tvNamaPeminjam.text = it.mahasiswa?.nama ?: "User ID: ${it.userId}"
+                tvNamaPeminjam.text = it.mahasiswa?.nama ?: "Mahasiswa Tidak Diketahui"
 
                 setupActionButtons(it.status)
             }
@@ -117,6 +127,7 @@ class DetailPinjamActivity : AppCompatActivity() {
         btnApprove.visibility = View.GONE
         btnReject.visibility = View.GONE
         btnAmbilAlat.visibility = View.GONE
+        btnLaporKembali.visibility = View.GONE
 
         if (isStaff) {
             when (status.lowercase()) {
@@ -125,16 +136,21 @@ class DetailPinjamActivity : AppCompatActivity() {
                     btnReject.visibility = View.VISIBLE
                 }
                 "approved" -> {
-                    // Tombol Konfirmasi Pengambilan Alat Fisik
                     btnAmbilAlat.visibility = View.VISIBLE
                     btnAmbilAlat.text = "Konfirmasi Pengambilan Alat"
                 }
             }
         } else {
-            // Logika untuk Mahasiswa jika diperlukan (misal: Tombol Batalkan)
-            if (status.lowercase() == "pending") {
-                btnReject.visibility = View.VISIBLE
-                btnReject.text = "Batalkan Pengajuan"
+            when (status.lowercase()) {
+                "pending" -> {
+                    btnReject.visibility = View.VISIBLE
+                    btnReject.text = "Batalkan Pengajuan"
+                }
+                // ─── REVISI 5: Tampilkan tombol Lapor Kembali jika alat sedang dibawa mahasiswa ───
+                "taken", "dipinjam" -> {
+                    btnLaporKembali.visibility = View.VISIBLE
+                    btnLaporKembali.text = "Lapor Pengembalian Alat"
+                }
             }
         }
     }

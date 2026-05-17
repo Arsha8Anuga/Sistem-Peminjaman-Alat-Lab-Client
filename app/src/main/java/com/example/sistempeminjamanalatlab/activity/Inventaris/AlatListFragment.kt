@@ -33,7 +33,7 @@ class AlatListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // 1. Inflate layout secara manual
-        val view = inflater.inflate(R.layout.lab_laporan_kondisi_activity, container, false)
+        val view = inflater.inflate(R.layout.fragment_alat_list, container, false)
 
         // 2. Inisialisasi View menggunakan findViewById dari objek 'view'
         rvAlat = view.findViewById(R.id.recyclerKondisiLog)
@@ -45,21 +45,21 @@ class AlatListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // ─── PERBAIKAN 2: Siapkan ViewModel dan Adapter (RecyclerView) dulu ───
         setupViewModel()
-        setupRecyclerView()
-        observeViewModel()
+        setupRecyclerView() // Adapter dibuat di sini
+        observeViewModel()  // Baru amati datanya di sini agar aman
 
-        // 3. Ambil data
+        // 3. Ambil data setelah semua observer dan adapter siap menampung
         val token = SessionManager.getBearerToken(requireContext()) ?: ""
         viewModel.fetchAllAlat(token)
     }
 
     private fun setupRecyclerView() {
-        // Menggunakan GridLayoutManager 2 kolom sesuai permintaan
+        // Tetap pertahankan GridLayoutManager 2 kolom agar rapi berbentuk grid/kotak
         rvAlat.layoutManager = GridLayoutManager(requireContext(), 2)
 
         adapter = AlatAdapter(arrayListOf()) { alat ->
-            // Navigasi ke detail saat item diklik
             val intent = Intent(requireContext(), AlatDetailActivity::class.java)
             intent.putExtra("ALAT_ID", alat.id)
             startActivity(intent)

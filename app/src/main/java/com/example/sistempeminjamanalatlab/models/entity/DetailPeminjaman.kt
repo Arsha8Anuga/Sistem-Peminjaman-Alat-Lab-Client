@@ -13,9 +13,9 @@ data class DetailPeminjaman(
 
     // Status kondisi (Gunakan null-safe karena diisi saat kembali)
     @SerializedName("kondisi_awal") val kondisiAwal: String?,
-    @SerializedName("kondisi_akhir") val kondisiAkhir: String?,
+    @SerializedName("kondisi_akhir") var kondisiAkhir: String?,
 
-    @SerializedName("catatan_pengembalian") val catatanPengembalian: String?,
+    @SerializedName("catatan_pengembalian") var catatanPengembalian: String?,
 
     // Relasi objek (Hasil JOIN dari backend)
     @SerializedName("alat") val alat: Alat? = null
