@@ -1,4 +1,4 @@
-package com.example.sistempeminjamanalatlab.activity.profile
+/*package com.example.sistempeminjamanalatlab.activity.profile
 
 import android.app.Activity
 import android.content.Intent
@@ -161,4 +161,4 @@ class ProfileActivity : AppCompatActivity() {
         // Implementasi mengambil path file dari URI (Gunakan library atau FileUtils milikmu)
         return uri.path ?: ""
     }
-}
+}*/

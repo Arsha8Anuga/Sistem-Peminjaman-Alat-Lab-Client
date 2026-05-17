@@ -78,7 +78,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_inventory"
-                    android:tint="#3F51B5"/>
+                    app:tint="#3F51B5"/>
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
