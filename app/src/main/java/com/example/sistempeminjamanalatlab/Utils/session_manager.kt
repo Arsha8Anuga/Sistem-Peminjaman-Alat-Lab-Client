@@ -6,17 +6,6 @@ import com.example.sistempeminjamanalatlab.models.entity.User
 import com.example.sistempeminjamanalatlab.models.response.LoginData
 import com.google.gson.Gson
 
-/**
- * SessionManager
- * Menyimpan data login user ke SharedPreferences.
- *
- * Penggunaan:
- *   SessionManager.saveSession(context, loginData, token)
- *   SessionManager.getToken(context)
- *   SessionManager.getUser(context)
- *   SessionManager.isLoggedIn(context)
- *   SessionManager.clearSession(context)
- */
 object SessionManager {
 
     private const val PREF_NAME = "lab_session"
@@ -29,10 +18,6 @@ object SessionManager {
     private fun prefs(context: Context): SharedPreferences =
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
-    // ─── SIMPAN DATA DARI LOGIN ──────────────────────────
-
-    /** * Dipanggil setelah login sukses menggunakan data dari LoginData
-     */
     fun saveLoginSession(context: Context, data: LoginData) {
         prefs(context).edit().apply {
             putString(KEY_TOKEN, data.accessToken)
@@ -43,19 +28,12 @@ object SessionManager {
         }
     }
 
-    // ─── SIMPAN / UPDATE OBJEK USER LENGKAP ──────────────
-
-    /**
-     * Dipanggil saat ambil detail profil (User Entity)
-     */
     fun saveUserDetail(context: Context, user: User) {
         prefs(context).edit()
             .putString(KEY_USER, Gson().toJson(user))
-            .putString(KEY_ROLE, user.role) // Sinkronkan ulang role jika berubah
+            .putString(KEY_ROLE, user.role)
             .apply()
     }
-
-    // ─── AMBIL DATA ───────────────────────────────────────
 
     fun getToken(context: Context): String? =
         prefs(context).getString(KEY_TOKEN, null)
@@ -76,15 +54,10 @@ object SessionManager {
         return Gson().fromJson(json, User::class.java)
     }
 
-    // ─── LOGIKA STATUS ────────────────────────────────────
-
     fun isLoggedIn(context: Context): Boolean = getToken(context) != null
 
-    // Helper Role (Tetap seperti kodinganmu karena sudah bagus)
     fun isStaff(context: Context): Boolean =
         getRole(context) in listOf("laboran", "asisten", "admin")
-
-    // ─── HAPUS ───────────────────────────────────────────
 
     fun clearSession(context: Context) {
         prefs(context).edit().clear().apply()

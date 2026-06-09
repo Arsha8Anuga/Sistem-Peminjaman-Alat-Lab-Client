@@ -12,9 +12,6 @@ import com.example.sistempeminjamanalatlab.repository.AlatRepository
 import okhttp3.MultipartBody
 
 class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
-
-    // ─── STATE / DATA ──────────────────────────────────────────
-
     private val _listAlat = MutableLiveData<List<Alat>?>()
     val listAlat: LiveData<List<Alat>?> = _listAlat
 
@@ -23,8 +20,6 @@ class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
 
     private val _detailAlat = MutableLiveData<Alat?>()
     val detailAlat: LiveData<Alat?> = _detailAlat
-
-    // Status UI
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -34,11 +29,8 @@ class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
     private val _kategoriDetail = MutableLiveData<KategoriAlat?>()
     val kategoriDetail: LiveData<KategoriAlat?> = _kategoriDetail
 
-    // Flag sukses untuk navigasi (setelah tambah/update/hapus)
     private val _actionSuccess = MutableLiveData<Boolean>()
     val actionSuccess: LiveData<Boolean> = _actionSuccess
-
-    // ─── FUNGSI AMBIL DATA (READ) ─────────────────────────────
 
     fun fetchAllAlat(token: String) {
         _isLoading.value = true
@@ -64,8 +56,6 @@ class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
         }
     }
 
-    // ─── FUNGSI MANAJEMEN (CRUD) ──────────────────────────────
-
     fun insertAlat(token: String, request: AlatCreateRequest) {
         _isLoading.value = true
         repository.addAlat(token, request) { success, msg ->
@@ -78,12 +68,10 @@ class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
     fun fetchKategoriById(token: String, id: Long) {
         _isLoading.value = true
 
-        // Memanggil fungsi repo yang tadi kamu tunjukkan
         repository.getKategoriById(token, id) { data, msg ->
             _isLoading.value = false
             _kategoriDetail.value = data
 
-            // Jika gagal dan ada pesan error, teruskan ke LiveData message
             if (data == null && msg != null) {
                 _message.value = msg
             }
@@ -106,37 +94,31 @@ class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
             _message.value = msg
             if (success) {
                 _actionSuccess.value = true
-                // Refresh list setelah hapus
                 fetchAllAlat(token)
             }
         }
     }
 
-    // ─── FUNGSI MANAJEMEN KATEGORI (Tambahan Baru agar Repo Terpakai Semua) ──────────────────
-
-    /** Menambahkan Kategori Alat Baru (Admin/Laboran) */
     fun insertKategori(token: String, request: KategoriRequest) {
         _isLoading.value = true
         repository.createKategori(token, request) { success, msg ->
             _isLoading.value = false
             _message.value = msg ?: if (success) "Kategori berhasil dibuat" else "Gagal membuat kategori"
             _actionSuccess.value = success
-            if (success) fetchKategori(token) // Refresh list kategori otomatis
+            if (success) fetchKategori(token)
         }
     }
 
-    /** Mengupdate Nama Kategori Alat (Admin/Laboran) */
     fun updateKategori(token: String, id: Long, request: KategoriRequest) {
         _isLoading.value = true
         repository.updateKategori(token, id, request) { success, msg ->
             _isLoading.value = false
             _message.value = msg ?: if (success) "Kategori berhasil diupdate" else "Gagal mengupdate kategori"
             _actionSuccess.value = success
-            if (success) fetchKategori(token) // Refresh list kategori otomatis
+            if (success) fetchKategori(token)
         }
     }
 
-    /** Menghapus Kategori Alat (Admin/Laboran) */
     fun deleteKategori(token: String, id: Long) {
         _isLoading.value = true
         repository.deleteKategori(token, id) { success, msg ->
@@ -144,24 +126,21 @@ class AlatViewModel(private val repository: AlatRepository) : ViewModel() {
             _message.value = msg ?: if (success) "Kategori berhasil dihapus" else "Gagal menghapus kategori"
             if (success) {
                 _actionSuccess.value = true
-                fetchKategori(token) // Refresh list kategori otomatis
+                fetchKategori(token)
             }
         }
     }
 
-    /** Reset state actionSuccess agar navigasi tidak terpicu berulang kali */
     fun resetActionState() {
         _actionSuccess.value = false
     }
-
-    // ─── UPLOAD FOTO ──────────────────────────────────────────
 
     fun uploadFoto(token: String, id: Long, imagePart: MultipartBody.Part) {
         _isLoading.value = true
         repository.uploadFotoAlat(token, id, imagePart) { success, msg ->
             _isLoading.value = false
             _message.value = msg
-            if (success) fetchAlatDetail(token, id) // Refresh detail agar foto muncul
+            if (success) fetchAlatDetail(token, id)
         }
     }
 }

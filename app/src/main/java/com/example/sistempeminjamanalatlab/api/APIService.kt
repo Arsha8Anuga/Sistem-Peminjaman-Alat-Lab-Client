@@ -34,7 +34,7 @@ interface APIService {
     @GET("alat/{alat_id}")
     fun getAlatById(@Header("Authorization") token: String, @Path("alat_id") id: Long): Call<AlatResponse>
 
-    @PUT("alat/{id}") // sesuaikan dengan endpoint routing di FastAPI kamu
+    @PUT("alat/{id}")
     fun updateAlat(
         @Header("Authorization") token: String,
         @Path("id") id: Long,
